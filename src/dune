@@ -1,0 +1,11 @@
+(library
+ (name cs2_market)
+ (libraries core)
+ (preprocess
+  (pps ppx_jane bisect_ppx)))
+
+(library
+ (name cs2_watch)
+ (libraries yojson core)
+ (preprocess
+  (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
