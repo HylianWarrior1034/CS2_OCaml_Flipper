@@ -1,0 +1,121 @@
+# dune build
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Workspace root: /home/ceash1034/FPSE/CS2_OCaml_Flipper
+# Auto-detected concurrency: 12
+$ /home/ceash1034/.opam/5.0.0/bin/ocamlc.opt -config > /tmp/dune_68c62c_output
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; for_host = None
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; ocaml_bin = External "/home/ceash1034/.opam/5.0.0/bin"
+#  ; ocaml = Ok External "/home/ceash1034/.opam/5.0.0/bin/ocaml"
+#  ; ocamlc = External "/home/ceash1034/.opam/5.0.0/bin/ocamlc.opt"
+#  ; ocamlopt = Ok External "/home/ceash1034/.opam/5.0.0/bin/ocamlopt.opt"
+#  ; ocamldep = Ok External "/home/ceash1034/.opam/5.0.0/bin/ocamldep.opt"
+#  ; ocamlmklib = Ok External "/home/ceash1034/.opam/5.0.0/bin/ocamlmklib.opt"
+#  ; env =
+#      map
+#        { "DUNE_OCAML_HARDCODED" :
+#            "/home/ceash1034/.opam/5.0.0/lib/ocaml:/home/ceash1034/.opam/5.0.0/lib"
+#        ; "DUNE_OCAML_STDLIB" : "/home/ceash1034/.opam/5.0.0/lib/ocaml"
+#        ; "DUNE_SOURCEROOT" : "/home/ceash1034/FPSE/CS2_OCaml_Flipper"
+#        ; "INSIDE_DUNE" :
+#            "/home/ceash1034/FPSE/CS2_OCaml_Flipper/_build/default"
+#        ; "OCAMLFIND_IGNORE_DUPS_IN" :
+#            "/home/ceash1034/FPSE/CS2_OCaml_Flipper/_build/install/default/lib"
+#        ; "OCAMLPATH" :
+#            "/home/ceash1034/FPSE/CS2_OCaml_Flipper/_build/install/default/lib"
+#        ; "OCAMLTOP_INCLUDE_PATH" :
+#            "/home/ceash1034/FPSE/CS2_OCaml_Flipper/_build/install/default/lib/toplevel"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
+#        }
+#  ; findlib_paths =
+#      [ External "/home/ceash1034/.opam/5.0.0/lib/ocaml"
+#      ; External "/home/ceash1034/.opam/5.0.0/lib"
+#      ]
+#  ; natdynlink_supported = true
+#  ; supports_shared_libraries = true
+#  ; ocaml_config =
+#      { version = "5.0.0"
+#      ; standard_library_default = "/home/ceash1034/.opam/5.0.0/lib/ocaml"
+#      ; standard_library = "/home/ceash1034/.opam/5.0.0/lib/ocaml"
+#      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
+#      ; ccomp_type = "cc"
+#      ; c_compiler = "gcc"
+#      ; ocamlc_cflags =
+#          [ "-O2"; "-fno-strict-aliasing"; "-fwrapv"; "-pthread"; "-fPIC" ]
+#      ; ocamlc_cppflags = [ "-D_FILE_OFFSET_BITS=64" ]
+#      ; ocamlopt_cflags =
+#          [ "-O2"; "-fno-strict-aliasing"; "-fwrapv"; "-pthread"; "-fPIC" ]
+#      ; ocamlopt_cppflags = [ "-D_FILE_OFFSET_BITS=64" ]
+#      ; bytecomp_c_compiler =
+#          [ "gcc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-pthread"
+#          ; "-fPIC"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ]
+#      ; bytecomp_c_libraries = [ "-lm"; "-lpthread" ]
+#      ; native_c_compiler =
+#          [ "gcc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-pthread"
+#          ; "-fPIC"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ]
+#      ; native_c_libraries = [ "-lm"; "-lpthread" ]
+#      ; native_pack_linker = [ "ld"; "-r"; "-o" ]
+#      ; cc_profile = []
+#      ; architecture = "amd64"
+#      ; model = "default"
+#      ; int_size = 63
+#      ; word_size = 64
+#      ; system = "linux"
+#      ; asm = [ "as" ]
+#      ; asm_cfi_supported = true
+#      ; with_frame_pointers = false
+#      ; ext_exe = ""
+#      ; ext_obj = ".o"
+#      ; ext_asm = ".s"
+#      ; ext_lib = ".a"
+#      ; ext_dll = ".so"
+#      ; os_type = "Unix"
+#      ; default_executable_name = "a.out"
+#      ; systhread_supported = true
+#      ; host = "x86_64-pc-linux-gnu"
+#      ; target = "x86_64-pc-linux-gnu"
+#      ; profiling = false
+#      ; flambda = false
+#      ; spacetime = false
+#      ; safe_string = true
+#      ; exec_magic_number = "Caml1999X032"
+#      ; cmi_magic_number = "Caml1999I032"
+#      ; cmo_magic_number = "Caml1999O032"
+#      ; cma_magic_number = "Caml1999A032"
+#      ; cmx_magic_number = "Caml1999Y032"
+#      ; cmxa_magic_number = "Caml1999Z032"
+#      ; ast_impl_magic_number = "Caml1999M032"
+#      ; ast_intf_magic_number = "Caml1999N032"
+#      ; cmxs_magic_number = "Caml1999D032"
+#      ; cmt_magic_number = "Caml1999T032"
+#      ; natdynlink_supported = true
+#      ; supports_shared_libraries = true
+#      ; windows_unicode = false
+#      }
+#  }
+$ (cd _build/default && /usr/bin/zip -R observer.zip src/cs2_watch.ml src/dune)
+>   adding: src/cs2_watch.ml (deflated 53%)
+>   adding: src/dune (deflated 51%)
+$ (cd _build/.sandbox/7c575425a379d512ccd21f6d1d8e0d25/default && .ppx/a4ea0d83c521725fd7b0167e93f2550b/ppx.exe -o src/cs2_watch.pp.ml --impl src/cs2_watch.ml -corrected-suffix .ppx-corrected -diff-cmd - -dump-ast)
+$ (cd _build/default && /home/ceash1034/.opam/5.0.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I src/.cs2_watch.eobjs/byte -I src/.cs2_watch.eobjs/native -I /home/ceash1034/.opam/5.0.0/lib/angstrom -I /home/ceash1034/.opam/5.0.0/lib/astring -I /home/ceash1034/.opam/5.0.0/lib/base -I /home/ceash1034/.opam/5.0.0/lib/base/base_internalhash_types -I /home/ceash1034/.opam/5.0.0/lib/base/caml -I /home/ceash1034/.opam/5.0.0/lib/base/md5 -I /home/ceash1034/.opam/5.0.0/lib/base/shadow_stdlib -I /home/ceash1034/.opam/5.0.0/lib/base64 -I /home/ceash1034/.opam/5.0.0/lib/base_bigstring -I /home/ceash1034/.opam/5.0.0/lib/base_quickcheck -I /home/ceash1034/.opam/5.0.0/lib/base_quickcheck/ppx_quickcheck/runtime -I /home/ceash1034/.opam/5.0.0/lib/bigstringaf -I /home/ceash1034/.opam/5.0.0/lib/bin_prot -I /home/ceash1034/.opam/5.0.0/lib/bin_prot/shape -I /home/ceash1034/.opam/5.0.0/lib/bytes -I /home/ceash1034/.opam/5.0.0/lib/cohttp -I /home/ceash1034/.opam/5.0.0/lib/cohttp-lwt -I /home/ceash1034/.opam/5.0.0/lib/cohttp-lwt-unix -I /home/ceash1034/.opam/5.0.0/lib/conduit -I /home/ceash1034/.opam/5.0.0/lib/conduit-lwt -I /home/ceash1034/.opam/5.0.0/lib/conduit-lwt-unix -I /home/ceash1034/.opam/5.0.0/lib/core -I /home/ceash1034/.opam/5.0.0/lib/core/base_for_tests -I /home/ceash1034/.opam/5.0.0/lib/core/command -I /home/ceash1034/.opam/5.0.0/lib/core/filename_base -I /home/ceash1034/.opam/5.0.0/lib/core/heap_block -I /home/ceash1034/.opam/5.0.0/lib/core/univ_map -I /home/ceash1034/.opam/5.0.0/lib/core/validate -I /home/ceash1034/.opam/5.0.0/lib/domain-name -I /home/ceash1034/.opam/5.0.0/lib/fieldslib -I /home/ceash1034/.opam/5.0.0/lib/fmt -I /home/ceash1034/.opam/5.0.0/lib/int_repr -I /home/ceash1034/.opam/5.0.0/lib/ipaddr -I /home/ceash1034/.opam/5.0.0/lib/ipaddr-sexp -I /home/ceash1034/.opam/5.0.0/lib/ipaddr/unix -I /home/ceash1034/.opam/5.0.0/lib/jane-street-headers -I /home/ceash1034/.opam/5.0.0/lib/logs -I /home/ceash1034/.opam/5.0.0/lib/lwt -I /home/ceash1034/.opam/5.0.0/lib/lwt/unix -I /home/ceash1034/.opam/5.0.0/lib/lwt_ssl -I /home/ceash1034/.opam/5.0.0/lib/macaddr -I /home/ceash1034/.opam/5.0.0/lib/magic-mime -I /home/ceash1034/.opam/5.0.0/lib/ocaml/threads -I /home/ceash1034/.opam/5.0.0/lib/ocaml/unix -I /home/ceash1034/.opam/5.0.0/lib/ocplib-endian -I /home/ceash1034/.opam/5.0.0/lib/ocplib-endian/bigstring -I /home/ceash1034/.opam/5.0.0/lib/parsexp -I /home/ceash1034/.opam/5.0.0/lib/ppx_assert/runtime-lib -I /home/ceash1034/.opam/5.0.0/lib/ppx_bench/runtime-lib -I /home/ceash1034/.opam/5.0.0/lib/ppx_compare/runtime-lib -I /home/ceash1034/.opam/5.0.0/lib/ppx_deriving/runtime -I /home/ceash1034/.opam/5.0.0/lib/ppx_deriving_yojson/runtime -I /home/ceash1034/.opam/5.0.0/lib/ppx_enumerate/runtime-lib -I /home/ceash1034/.opam/5.0.0/lib/ppx_expect/collector -I /home/ceash1034/.opam/5.0.0/lib/ppx_expect/common -I /home/ceash1034/.opam/5.0.0/lib/ppx_expect/config -I /home/ceash1034/.opam/5.0.0/lib/ppx_expect/config_types -I /home/ceash1034/.opam/5.0.0/lib/ppx_hash/runtime-lib -I /home/ceash1034/.opam/5.0.0/lib/ppx_here/runtime-lib -I /home/ceash1034/.opam/5.0.0/lib/ppx_inline_test/config -I /home/ceash1034/.opam/5.0.0/lib/ppx_inline_test/runtime-lib -I /home/ceash1034/.opam/5.0.0/lib/ppx_log/types -I /home/ceash1034/.opam/5.0.0/lib/ppx_module_timer/runtime -I /home/ceash1034/.opam/5.0.0/lib/ppx_sexp_conv/runtime-lib -I /home/ceash1034/.opam/5.0.0/lib/ppx_stable_witness/runtime -I /home/ceash1034/.opam/5.0.0/lib/ppx_stable_witness/stable_witness -I /home/ceash1034/.opam/5.0.0/lib/re -I /home/ceash1034/.opam/5.0.0/lib/result -I /home/ceash1034/.opam/5.0.0/lib/seq -I /home/ceash1034/.opam/5.0.0/lib/sexplib -I /home/ceash1034/.opam/5.0.0/lib/sexplib0 -I /home/ceash1034/.opam/5.0.0/lib/splittable_random -I /home/ceash1034/.opam/5.0.0/lib/ssl -I /home/ceash1034/.opam/5.0.0/lib/stdio -I /home/ceash1034/.opam/5.0.0/lib/stringext -I /home/ceash1034/.opam/5.0.0/lib/time_now -I /home/ceash1034/.opam/5.0.0/lib/typerep -I /home/ceash1034/.opam/5.0.0/lib/uri -I /home/ceash1034/.opam/5.0.0/lib/uri-sexp -I /home/ceash1034/.opam/5.0.0/lib/uri/services -I /home/ceash1034/.opam/5.0.0/lib/variantslib -I /home/ceash1034/.opam/5.0.0/lib/yojson -intf-suffix .ml -no-alias-deps -opaque -o src/.cs2_watch.eobjs/native/dune__exe__Cs2_watch.cmx -c -impl src/cs2_watch.pp.ml)
+$ (cd _build/default && /home/ceash1034/.opam/5.0.0/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o src/cs2_watch.exe /home/ceash1034/.opam/5.0.0/lib/base/base_internalhash_types/base_internalhash_types.cmxa -I /home/ceash1034/.opam/5.0.0/lib/base/base_internalhash_types /home/ceash1034/.opam/5.0.0/lib/base/caml/caml.cmxa /home/ceash1034/.opam/5.0.0/lib/sexplib0/sexplib0.cmxa /home/ceash1034/.opam/5.0.0/lib/base/shadow_stdlib/shadow_stdlib.cmxa /home/ceash1034/.opam/5.0.0/lib/base/base.cmxa -I /home/ceash1034/.opam/5.0.0/lib/base /home/ceash1034/.opam/5.0.0/lib/ppx_sexp_conv/runtime-lib/ppx_sexp_conv_lib.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_compare/runtime-lib/ppx_compare_lib.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_enumerate/runtime-lib/ppx_enumerate_lib.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_hash/runtime-lib/ppx_hash_lib.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_here/runtime-lib/ppx_here_lib.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_assert/runtime-lib/ppx_assert_lib.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_bench/runtime-lib/ppx_bench_lib.cmxa /home/ceash1034/.opam/5.0.0/lib/base/md5/md5_lib.cmxa /home/ceash1034/.opam/5.0.0/lib/fieldslib/fieldslib.cmxa /home/ceash1034/.opam/5.0.0/lib/variantslib/variantslib.cmxa /home/ceash1034/.opam/5.0.0/lib/bin_prot/shape/bin_shape.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_stable_witness/stable_witness/stable_witness.cmxa /home/ceash1034/.opam/5.0.0/lib/bin_prot/bin_prot.cmxa -I /home/ceash1034/.opam/5.0.0/lib/bin_prot /home/ceash1034/.opam/5.0.0/lib/ppx_inline_test/config/inline_test_config.cmxa /home/ceash1034/.opam/5.0.0/lib/jane-street-headers/jane_street_headers.cmxa /home/ceash1034/.opam/5.0.0/lib/time_now/time_now.cmxa -I /home/ceash1034/.opam/5.0.0/lib/time_now /home/ceash1034/.opam/5.0.0/lib/ppx_inline_test/runtime-lib/ppx_inline_test_lib.cmxa /home/ceash1034/.opam/5.0.0/lib/stdio/stdio.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_module_timer/runtime/ppx_module_timer_runtime.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_stable_witness/runtime/ppx_stable_witness_runtime.cmxa /home/ceash1034/.opam/5.0.0/lib/typerep/typerep_lib.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_expect/common/expect_test_common.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_expect/config_types/expect_test_config_types.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_expect/collector/expect_test_collector.cmxa -I /home/ceash1034/.opam/5.0.0/lib/ppx_expect/collector /home/ceash1034/.opam/5.0.0/lib/ppx_expect/config/expect_test_config.cmxa /home/ceash1034/.opam/5.0.0/lib/parsexp/parsexp.cmxa /home/ceash1034/.opam/5.0.0/lib/sexplib/sexplib.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_log/types/ppx_log_types.cmxa /home/ceash1034/.opam/5.0.0/lib/splittable_random/splittable_random.cmxa /home/ceash1034/.opam/5.0.0/lib/base_quickcheck/base_quickcheck.cmxa /home/ceash1034/.opam/5.0.0/lib/base_quickcheck/ppx_quickcheck/runtime/ppx_quickcheck_runtime.cmxa /home/ceash1034/.opam/5.0.0/lib/int_repr/int_repr.cmxa /home/ceash1034/.opam/5.0.0/lib/base_bigstring/base_bigstring.cmxa -I /home/ceash1034/.opam/5.0.0/lib/base_bigstring /home/ceash1034/.opam/5.0.0/lib/core/base_for_tests/base_for_tests.cmxa /home/ceash1034/.opam/5.0.0/lib/core/filename_base/filename_base.cmxa /home/ceash1034/.opam/5.0.0/lib/core/univ_map/univ_map.cmxa /home/ceash1034/.opam/5.0.0/lib/core/command/command.cmxa /home/ceash1034/.opam/5.0.0/lib/core/heap_block/heap_block.cmxa -I /home/ceash1034/.opam/5.0.0/lib/core/heap_block /home/ceash1034/.opam/5.0.0/lib/core/validate/validate.cmxa /home/ceash1034/.opam/5.0.0/lib/core/core.cmxa -I /home/ceash1034/.opam/5.0.0/lib/core /home/ceash1034/.opam/5.0.0/lib/yojson/yojson.cmxa /home/ceash1034/.opam/5.0.0/lib/fmt/fmt.cmxa /home/ceash1034/.opam/5.0.0/lib/logs/logs.cmxa /home/ceash1034/.opam/5.0.0/lib/lwt/lwt.cmxa /home/ceash1034/.opam/5.0.0/lib/logs/logs_lwt.cmxa /home/ceash1034/.opam/5.0.0/lib/macaddr/macaddr.cmxa /home/ceash1034/.opam/5.0.0/lib/domain-name/domain_name.cmxa /home/ceash1034/.opam/5.0.0/lib/ipaddr/ipaddr.cmxa /home/ceash1034/.opam/5.0.0/lib/ipaddr-sexp/ipaddr_sexp.cmxa /home/ceash1034/.opam/5.0.0/lib/stringext/stringext.cmxa /home/ceash1034/.opam/5.0.0/lib/bigstringaf/bigstringaf.cmxa -I /home/ceash1034/.opam/5.0.0/lib/bigstringaf /home/ceash1034/.opam/5.0.0/lib/angstrom/angstrom.cmxa /home/ceash1034/.opam/5.0.0/lib/uri/uri.cmxa /home/ceash1034/.opam/5.0.0/lib/astring/astring.cmxa /home/ceash1034/.opam/5.0.0/lib/conduit/conduit.cmxa /home/ceash1034/.opam/5.0.0/lib/conduit-lwt/conduit_lwt.cmxa /home/ceash1034/.opam/5.0.0/lib/magic-mime/magic_mime_library.cmxa /home/ceash1034/.opam/5.0.0/lib/ocplib-endian/ocplib_endian.cmxa /home/ceash1034/.opam/5.0.0/lib/ocplib-endian/bigstring/ocplib_endian_bigstring.cmxa /home/ceash1034/.opam/5.0.0/lib/ocaml/unix/unix.cmxa /home/ceash1034/.opam/5.0.0/lib/ocaml/threads/threads.cmxa /home/ceash1034/.opam/5.0.0/lib/lwt/unix/lwt_unix.cmxa -I /home/ceash1034/.opam/5.0.0/lib/lwt/unix /home/ceash1034/.opam/5.0.0/lib/uri/services/uri_services.cmxa /home/ceash1034/.opam/5.0.0/lib/ipaddr/unix/ipaddr_unix.cmxa /home/ceash1034/.opam/5.0.0/lib/ssl/ssl.cmxa -I /home/ceash1034/.opam/5.0.0/lib/ssl /home/ceash1034/.opam/5.0.0/lib/lwt_ssl/lwt_ssl.cmxa /home/ceash1034/.opam/5.0.0/lib/conduit-lwt-unix/conduit_lwt_unix.cmxa /home/ceash1034/.opam/5.0.0/lib/re/re.cmxa /home/ceash1034/.opam/5.0.0/lib/uri-sexp/uri_sexp.cmxa /home/ceash1034/.opam/5.0.0/lib/base64/base64.cmxa /home/ceash1034/.opam/5.0.0/lib/cohttp/cohttp.cmxa /home/ceash1034/.opam/5.0.0/lib/cohttp-lwt/cohttp_lwt.cmxa /home/ceash1034/.opam/5.0.0/lib/logs/logs_fmt.cmxa /home/ceash1034/.opam/5.0.0/lib/cohttp-lwt-unix/cohttp_lwt_unix.cmxa /home/ceash1034/.opam/5.0.0/lib/result/result.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_deriving/runtime/ppx_deriving_runtime.cmxa /home/ceash1034/.opam/5.0.0/lib/ppx_deriving_yojson/runtime/ppx_deriving_yojson_runtime.cmxa src/.cs2_watch.eobjs/native/dune__exe__Cs2_watch.cmx)

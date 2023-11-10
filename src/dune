@@ -1,11 +1,14 @@
-(library
- (name cs2_market)
- (libraries core)
- (preprocess
-  (pps ppx_jane bisect_ppx)))
+; (library
+;  (name cs2_watch)
+;  (libraries yojson core cohttp-lwt-unix)
+;  (preprocess
+;   (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
 
-(library
+(executable
  (name cs2_watch)
- (libraries yojson core)
+ (modules cs2_watch)
  (preprocess
-  (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
+  (pps ppx_deriving_yojson))
+ (libraries core yojson cohttp-lwt-unix ppx_deriving_yojson.runtime))
+
+; additional installations: cohttp, cohttp-lwt, cohttp-unix, yojson, lwt_ssl
