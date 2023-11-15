@@ -1,14 +1,22 @@
-; (library
-;  (name cs2_watch)
-;  (libraries yojson core cohttp-lwt-unix)
-;  (preprocess
-;   (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
-
-(executable
+(library
  (name cs2_watch)
  (modules cs2_watch)
+ (libraries yojson core cohttp-lwt-unix)
  (preprocess
-  (pps ppx_deriving_yojson ppx_jane))
- (libraries core yojson torch cohttp-lwt-unix ppx_deriving_yojson.runtime))
+  (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
+
+(executable
+ (name prediction)
+ (modules prediction)
+ (libraries yojson core torch cs2_watch)
+ (preprocess
+  (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
+
+; (executable
+;  (name cs2_watch)
+;  (modules cs2_watch)
+;  (preprocess
+;   (pps ppx_deriving_yojson ppx_jane))
+;  (libraries core yojson torch cohttp-lwt-unix ppx_deriving_yojson.runtime))
 
 ; additional installations: cohttp, cohttp-lwt, cohttp-unix, yojson, lwt_ssl

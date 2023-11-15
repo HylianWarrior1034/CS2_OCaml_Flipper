@@ -13,12 +13,14 @@ type item = {itemName:string; itemGroup: string; itemType:string; itemId: string
 
 (* CS2 Observer buyer, seller *)
 
-let parse (str : string) : string list = 
+let parse_items (str : string) : string list = 
   let stripped = String.strip ~drop: (fun c -> Char.equal c '[' || Char.equal c ']') str in 
   let split = String.split ~on: '}' stripped in 
   let stripped2 = List.map ~f: (fun l -> (String.lstrip ~drop: (fun c -> Char.equal c ',') l)) split in 
   let final = List.filter ~f: (fun x -> String.(x <> "")) stripped2 in
   List.map ~f: (fun l -> (l ^ "}")) final
+
+let parse_history (str : string) : string list = 
 
 
 let request_item_history (key: string) (markethashname: string) (origin: string) 
@@ -42,7 +44,7 @@ let request_items (key: string) (maxitems: string) (sort_by: string)
     body |> Cohttp_lwt.Body.to_string >|= fun body ->
     body 
     in 
-    List.map (Lwt_main.run body |> parse) ~f: (fun x -> x |> Yojson.Basic.from_string)
+    List.map (Lwt_main.run body |> parse_items) ~f: (fun x -> x |> Yojson.Basic.from_string)
 
 let yojson_to_item (l : Yojson.Basic.t list) : item list =
   let convert (it : Yojson.Basic.t) : item = 
