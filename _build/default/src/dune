@@ -8,7 +8,7 @@
 (executable
  (name prediction)
  (modules prediction)
- (libraries yojson core torch)
+ (libraries yojson torch core cs2_watch)
  (preprocess
   (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
 

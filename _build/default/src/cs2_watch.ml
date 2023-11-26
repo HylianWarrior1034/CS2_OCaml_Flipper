@@ -2,7 +2,6 @@
 
 open Core 
 open Lwt
-open Torch
 open Yojson.Basic.Util
 
 [@@@ocaml.warning "-27"]
@@ -10,6 +9,8 @@ open Yojson.Basic.Util
 
 
 type item = {itemName:string; itemGroup: string; itemType:string; itemId: string; lowestSellPrice: float} [@@deriving yojson, sexp]
+type history = {itemName: string; itemHistory: float list} [@@deriving yojson, sexp]
+
 
 (* CS2 Observer buyer, seller *)
 
@@ -20,7 +21,27 @@ let parse_items (str : string) : string list =
   let final = List.filter ~f: (fun x -> String.(x <> "")) stripped2 in
   List.map ~f: (fun l -> (l ^ "}")) final
 
-let parse_history (str : string) : string list = 
+let rec grab_next_record (str : string) (record : string) (depth : int) : string * string =
+  match str with
+  | "" -> (str, record)
+  | _ ->
+  match String.get str 0 with
+  | '{' ->
+    (if depth = 0 then grab_next_record (String.sub str ~pos:1 ~len:(String.length str - 1)) record 1
+    else grab_next_record (String.sub str ~pos:1 ~len:(String.length str - 1)) (record ^ "{") (depth + 1))
+  | '}' ->
+    (if depth = 1 && (String.compare str "}" = 0) then ("", record)
+    else if depth = 1 then ((String.sub str ~pos:1 ~len:(String.length str - 1)), record)
+    else grab_next_record (String.sub str ~pos:1 ~len:(String.length str - 1)) (record ^ "}") (depth + 1))
+  | character -> grab_next_record (String.sub str ~pos:1 ~len:(String.length str - 1)) (record ^ (String.make 1 character)) (depth + 1)
+
+let rec parse_history (history_list : string list) (str : string) : string list =
+  let no_brackets = String.strip ~drop: (fun c -> Char.equal c '[' || Char.equal c ']') str in
+  let next_record_tuple = grab_next_record no_brackets "" 0 in
+  match next_record_tuple with
+  | ("", next_record) -> history_list @ [next_record]
+  | (rest, next_record) ->
+    parse_history (history_list @ [next_record]) (String.sub rest ~pos:1 ~len:(String.length rest - 1))
 
 
 let request_item_history (key: string) (markethashname: string) (origin: string) 
@@ -33,7 +54,7 @@ let request_item_history (key: string) (markethashname: string) (origin: string)
     body 
     in 
     (* Lwt_main.run body |> parse ////////////// |> member "markethashname"*) 
-    List.map (Lwt_main.run body |> parse) ~f: (fun x -> x |> Yojson.Basic.from_string)
+    List.map (Lwt_main.run body |> parse_history []) ~f: (fun x -> x |> Yojson.Basic.from_string)
 
 let request_items (key: string) (maxitems: string) (sort_by: string) 
 (price_min: string) (price_max: string) (item_group: string) (item_type: string) : Yojson.Basic.t list = 
@@ -42,7 +63,7 @@ let request_items (key: string) (maxitems: string) (sort_by: string)
   let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat ~sep: "&" list) in
   let body = Cohttp_lwt_unix.Client.get (Uri.of_string request) >>= fun (_, body) ->
     body |> Cohttp_lwt.Body.to_string >|= fun body ->
-    body 
+    body
     in 
     List.map (Lwt_main.run body |> parse_items) ~f: (fun x -> x |> Yojson.Basic.from_string)
 

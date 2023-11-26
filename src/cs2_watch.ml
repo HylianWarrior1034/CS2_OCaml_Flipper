@@ -2,7 +2,6 @@
 
 open Core 
 open Lwt
-open Torch
 open Yojson.Basic.Util
 
 [@@@ocaml.warning "-27"]

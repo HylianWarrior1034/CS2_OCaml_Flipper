@@ -3,7 +3,7 @@ type history = {itemName: string; itemHistory: float list} [@@deriving yojson, s
 
 val parse_items : string -> string list
 
-val parse_history : string -> string list 
+val parse_history : string list -> string -> string list 
 
 val request_items : string ->
     string ->
