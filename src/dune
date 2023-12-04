@@ -8,7 +8,6 @@
 (library
  (name item_list)
  (modules item_list)
- (libraries yojson core cohttp-lwt-unix)
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
 

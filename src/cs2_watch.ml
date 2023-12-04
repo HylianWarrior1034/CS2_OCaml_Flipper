@@ -9,6 +9,7 @@ open Yojson.Basic.Util
 
 
 type item = {itemName:string; itemGroup: string; itemType:string; itemId: string; lowestSellPrice: float} [@@deriving yojson, sexp]
+(* put a time type that we can use to graph our data and implement it *)
 type transaction = {id: int; price: float; num_sold: int; itemId: string} [@@deriving yojson, sexp]
 type history = transaction list
 
