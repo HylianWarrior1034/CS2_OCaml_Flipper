@@ -3,7 +3,7 @@ open Lwt
 open Cs2_watch
 
 let api_url = "https://www.steamwebapi.com"
-let api_key = "RYESIG8WRAX6TXS8"
+let api_key = "W2VDY6UEYE5LMQTP"
 let item_groups = ["pistol"; "smg"; "shotgun"; "machinegun"; "rifle"; "knife"; "gloves"]
 let item_types =
   [
@@ -11,8 +11,8 @@ let item_types =
     ["MAC-10"; "MP5-SD"; "MP7"; "MP9"; "PP-Bizon"; "P90"; "UMP-45"];
     ["MAG-7"; "Nova"; "Sawed-Off"; "XM1014"];
     ["M249"; "Negev"];
-    ["AK-47"; "AUG"; "AWP"; "FAMAS"; "G3SG1"; "Galil AR"; "M4A1-S"; "M4A4"; "SCAR-20"; "SG 553"; "SSG 08"];
-    ["Bayonet"; "Bowie Knife"; "Butterfly Knife"; "Classic Knife"; "Falchion Knife"; "Flip Knife"; "Gut Knife"; "Huntsman Knife"; "Karambit"; "M9 Bayonet"; "Navaja Knife"; "Nomad Knife"; "Paracord Knife"; "Shadow Daggers"; "Skeleton Knife"; "Stiletto Knife"; "Survival Knife"; "Talon Knife"; "Ursus Knife"];
+    ["AK-47"; "AUG"; "FAMAS"; "Galil AR"; "M4A1-S"; "M4A4"; "SG 553"];
+    ["Bayonet"; "Butterfly Knife"; "Classic Knife"; "Falchion Knife"; "Flip Knife"; "Gut Knife"; "Huntsman Knife"; "Karambit"; "M9 Bayonet"; "Navaja Knife"; "Nomad Knife"; "Paracord Knife"; "Shadow Daggers"; "Skeleton Knife"; "Stiletto Knife"; "Survival Knife"; "Talon Knife"; "Ursus Knife"];
     ["Bloodhound Gloves"; "Broken Fang Gloves"; "Driver Gloves"; "Hand Wraps"; "Hydra Gloves"; "Moto Gloves"; "Specialist Gloves"; "Sport Gloves"];
   ]
 
@@ -56,10 +56,11 @@ let rec get_item_group_data (item_group : string) (item_names : string list) (da
   match item_names with
   | [] -> data_points
   | (head :: tail) ->
+    Stdio.printf "Retrieiving data for item: %s\n" head;
     match (get_item_info item_group head) with
     | (hash_name, price) ->
       let price_history = get_item_price_history hash_name in
-      if float.(price >= (List.nth_exn price_history 0)) >= 0 then
+      if Float.(price >= (List.nth_exn price_history 0)) then
         get_item_group_data
         item_group tail
         (
@@ -104,10 +105,12 @@ let rec create_data_set_string (item_groups : string list) (item_types : string 
     match item_types with
     | [] -> failwith "There should be the same number of item groups and item type lists."
     | (item_names :: rest_of_items) ->
+      Stdio.printf "----Item Group: %s----\n" head;
       let item_group_data_points = get_item_group_data head item_names ""
       in
       let updated_data_set = Printf.sprintf "%s%s" data_set item_group_data_points
       in
+      Lwt_unix.sleep 60.0 |> Lwt_main.run;
       create_data_set_string tail rest_of_items updated_data_set
     )
 
