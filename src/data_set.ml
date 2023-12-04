@@ -1,6 +1,7 @@
 open Core
 open Lwt
 open Cs2_watch
+open Item_list
 
 let api_url = "https://www.steamwebapi.com"
 let api_key = "W2VDY6UEYE5LMQTP"
@@ -97,6 +98,7 @@ let rec get_item_group_data (item_group : string) (item_names : string list) (da
           (List.nth_exn price_history 0)
         )
 
+(*
 let rec create_data_set_string (item_groups : string list) (item_types : string list list) (data_set : string) : string =
   match item_groups with
   | [] -> data_set
@@ -113,7 +115,14 @@ let rec create_data_set_string (item_groups : string list) (item_types : string 
       Lwt_unix.sleep 60.0 |> Lwt_main.run;
       create_data_set_string tail rest_of_items updated_data_set
     )
+*)
 
+let rec create_data_set_string (all_items : cs2_item list) (data_set : string) : string =
+  match all_items with
+  | [] -> data_set
+  | (curr_item :: tail) ->
+    let item_hash_name = Printf.sprintf "%s | %s (%s)" curr_item.weapon curr_item.skin curr_item.quality
+    in
 
 let () =
   let channel = Out_channel.create "data_set.csv" in

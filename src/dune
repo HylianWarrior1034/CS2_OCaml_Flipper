@@ -3,14 +3,21 @@
  (modules cs2_watch)
  (libraries yojson core cohttp-lwt-unix)
  (preprocess
-  (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
+  (pps ppx_jane ppx_deriving_yojson)))
+
+(library
+ (name item_list)
+ (modules item_list)
+ (libraries yojson core cohttp-lwt-unix)
+ (preprocess
+  (pps ppx_jane ppx_deriving_yojson)))
 
 (executables
- (names data_set)
+ (names data_set) ;add more executables and their modules here
  (modules data_set)
- (libraries yojson core cs2_watch)
+ (libraries yojson core cs2_watch item_list) ;add torch back later
  (preprocess
-  (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
+  (pps ppx_jane ppx_deriving_yojson)))
 
 ; (executable
 ;  (name cs2_watch)
