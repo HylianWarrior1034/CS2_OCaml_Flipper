@@ -9,7 +9,8 @@ open Yojson.Basic.Util
 
 
 type item = {itemName:string; itemGroup: string; itemType:string; itemId: string; lowestSellPrice: float} [@@deriving yojson, sexp]
-type history = {itemName: string; itemHistory: float list} [@@deriving yojson, sexp]
+type transaction = {id: int; price: float; num_sold: int; itemId: string} [@@deriving yojson, sexp]
+type history = transaction list
 
 
 (* CS2 Observer buyer, seller *)
@@ -21,28 +22,12 @@ let parse_items (str : string) : string list =
   let final = List.filter ~f: (fun x -> String.(x <> "")) stripped2 in
   List.map ~f: (fun l -> (l ^ "}")) final
 
-let rec grab_next_record (str : string) (record : string) (depth : int) : string * string =
-  match str with
-  | "" -> (str, record)
-  | _ ->
-  match String.get str 0 with
-  | '{' ->
-    (if depth = 0 then grab_next_record (String.sub str ~pos:1 ~len:(String.length str - 1)) record 1
-    else grab_next_record (String.sub str ~pos:1 ~len:(String.length str - 1)) (record ^ "{") (depth + 1))
-  | '}' ->
-    (if depth = 1 && (String.compare str "}" = 0) then ("", record)
-    else if depth = 1 then ((String.sub str ~pos:1 ~len:(String.length str - 1)), record)
-    else grab_next_record (String.sub str ~pos:1 ~len:(String.length str - 1)) (record ^ "}") (depth + 1))
-  | character -> grab_next_record (String.sub str ~pos:1 ~len:(String.length str - 1)) (record ^ (String.make 1 character)) (depth + 1)
-
-let rec parse_history (history_list : string list) (str : string) : string list =
+let parse_history (str : string) : string list =
   let no_brackets = String.strip ~drop: (fun c -> Char.equal c '[' || Char.equal c ']') str in
-  let next_record_tuple = grab_next_record no_brackets "" 0 in
-  match next_record_tuple with
-  | ("", next_record) -> history_list @ [next_record]
-  | (rest, next_record) ->
-    parse_history (history_list @ [next_record]) (String.sub rest ~pos:1 ~len:(String.length rest - 1))
-
+  let split = String.split ~on: '}' no_brackets in
+  let no_commas = List.map ~f: (fun l -> (String.lstrip ~drop: (fun c -> Char.equal c ',') l)) split in
+  let final = List.filter ~f:(fun x-> String.(x <> "")) no_commas in
+  List.map ~f:(fun l -> (l ^ "}")) final
 
 let request_item_history (key: string) (markethashname: string) (origin: string) 
 (source: string) (interval: string) (start_date: string) (end_date: string) : Yojson.Basic.t list = 
@@ -54,7 +39,7 @@ let request_item_history (key: string) (markethashname: string) (origin: string)
     body 
     in 
     (* Lwt_main.run body |> parse ////////////// |> member "markethashname"*) 
-    List.map (Lwt_main.run body |> parse_history []) ~f: (fun x -> x |> Yojson.Basic.from_string)
+    List.map (Lwt_main.run body |> parse_history) ~f: (fun x -> x |> Yojson.Basic.from_string)
 
 let request_items (key: string) (maxitems: string) (sort_by: string) 
 (price_min: string) (price_max: string) (item_group: string) (item_type: string) : Yojson.Basic.t list = 
@@ -67,7 +52,7 @@ let request_items (key: string) (maxitems: string) (sort_by: string)
     in 
     List.map (Lwt_main.run body |> parse_items) ~f: (fun x -> x |> Yojson.Basic.from_string)
 
-let yojson_to_item (l : Yojson.Basic.t list) : item list =
+let yojson_to_items (l : Yojson.Basic.t list) : item list =
   let convert (it : Yojson.Basic.t) : item = 
     let itemName = it |> member "markethashname" |> to_string in 
     let itemGroup = it |> member "itemgroup" |> to_string in 
@@ -79,6 +64,17 @@ let yojson_to_item (l : Yojson.Basic.t list) : item list =
   in 
   List.map l ~f: (fun x -> convert x)
 
+let yojson_to_history (l : Yojson.Basic.t list) : history =
+  let convert (it : Yojson.Basic.t) : transaction =
+    let id = it |> member "id" |> to_int in
+    let price = it |> member "avg" |> to_float in
+    let num_sold = it |> member "sold" |> to_int in
+    let itemId = it |> member "itemid" |> to_string in
+    let new_transaction = {id; price; num_sold; itemId} in
+    new_transaction
+  in
+  List.map l ~f:(fun x -> convert x)
+
 (* let () =
   let key = "key=" ^ "656PQ76T992M22KJ" in
   let maxitems = "max=100" in
@@ -89,9 +85,9 @@ let yojson_to_item (l : Yojson.Basic.t list) : item list =
   let item_type = "item_type=" ^ "AK-47" in
   let req = request_items key maxitems sort_by price_min price_max item_group item_type in
   (* print_endline ("Body Received\n" ^ (String.concat ~sep: "\n" req)) *)
-  let str_list = yojson_to_item req in 
+  let str_list = yojson_to_items req in 
   Stdio.printf "Received body \n %s \n" ([%sexp_of: item list] str_list |> Sexp.to_string_hum) *)
-
+(*
 let () =
   let key = "key=" ^ "656PQ76T992M22KJ" in
   let markethashname = "market_hash_name=AK-47 | Safari Mesh (Field-Tested)" in
@@ -104,3 +100,4 @@ let () =
   (* print_endline ("Body Received\n" ^ (String.concat ~sep: "\n" req)) *)
   let str_list = yojson_to_item req in 
   Stdio.printf "Received body \n %s \n" ([%sexp_of: item list] str_list |> Sexp.to_string_hum)
+*)

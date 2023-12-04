@@ -5,10 +5,10 @@
  (preprocess
   (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
 
-(executable
- (name prediction)
- (modules prediction)
- (libraries yojson torch core cs2_watch)
+(executables
+ (names data_set)
+ (modules data_set)
+ (libraries yojson core cs2_watch)
  (preprocess
   (pps ppx_jane bisect_ppx ppx_deriving_yojson)))
 
