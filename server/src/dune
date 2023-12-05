@@ -1,0 +1,6 @@
+(executable
+(name app)
+(modules app)
+(libraries core dream)
+(preprocess (pps lwt_ppx ppx_deriving_yojson))
+)
