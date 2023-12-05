@@ -1,4 +1,4 @@
-type cs2_item = { collection : string; weapon : string; skin : string; quality : string; url : string}
+type cs2_item = { collection : string; weapon : string; skin : string; quality : string; url : string }
 
 let all_items =
   [

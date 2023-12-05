@@ -9,9 +9,9 @@ open Yojson.Basic.Util
 
 
 type item = {itemName:string; itemGroup: string; itemType:string; itemId: string; lowestSellPrice: float} [@@deriving yojson, sexp]
-(* put a time type that we can use to graph our data and implement it *)
-type transaction = {id: int; price: float; num_sold: int; itemId: string} [@@deriving yojson, sexp]
-type history = transaction list
+type date = {year: int; month: int; day: int; hour: int; minute: int; second: int}
+type price_point = {id: int; price: float; num_sold: int; itemId: string; time: date}
+type history = price_point list
 
 
 (* CS2 Observer buyer, seller *)
@@ -29,6 +29,15 @@ let parse_history (str : string) : string list =
   let no_commas = List.map ~f: (fun l -> (String.lstrip ~drop: (fun c -> Char.equal c ',') l)) split in
   let final = List.filter ~f:(fun x-> String.(x <> "")) no_commas in
   List.map ~f:(fun l -> (l ^ "}")) final
+
+let date_of_string (str : string) : date =
+  let year = int_of_string (String.sub str ~pos:1 ~len:4) in
+  let month = int_of_string (String.sub str ~pos:6 ~len:2) in
+  let day = int_of_string (String.sub str ~pos:9 ~len:2) in
+  let hour = int_of_string (String.sub str ~pos:12 ~len:2) in
+  let minute = int_of_string (String.sub str ~pos:15 ~len:2) in
+  let second = int_of_string (String.sub str ~pos:18 ~len:2) in
+  {year; month; day; hour; minute; second}
 
 let request_item_history (key: string) (markethashname: string) (origin: string) 
 (source: string) (interval: string) (start_date: string) (end_date: string) : Yojson.Basic.t list = 
@@ -66,13 +75,14 @@ let yojson_to_items (l : Yojson.Basic.t list) : item list =
   List.map l ~f: (fun x -> convert x)
 
 let yojson_to_history (l : Yojson.Basic.t list) : history =
-  let convert (it : Yojson.Basic.t) : transaction =
+  let convert (it : Yojson.Basic.t) : price_point =
     let id = it |> member "id" |> to_int in
     let price = it |> member "avg" |> to_float in
     let num_sold = it |> member "sold" |> to_int in
     let itemId = it |> member "itemid" |> to_string in
-    let new_transaction = {id; price; num_sold; itemId} in
-    new_transaction
+    let time = (date_of_string (it |> member "createdat" |> to_string)) in
+    let new_price_point = {id; price; num_sold; itemId; time} in
+    new_price_point
   in
   List.map l ~f:(fun x -> convert x)
 
