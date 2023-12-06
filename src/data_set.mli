@@ -1,7 +1,8 @@
+open Cs2_watch
+open Item_list
+
 val api_url : string
 val api_key : string
-val item_groups : string list
-val item_types : string list list
-(* val parse_item_request : string -> string list *)
-val get_item_info : string -> string -> string * float
-val get_item_price_history : string -> float list
+val get_item_history : string -> history option
+val record_price_histories : history option list -> string -> int -> string * int
+val create_data_set_string : cs2_item list -> string -> int -> int -> string

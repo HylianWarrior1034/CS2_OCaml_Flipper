@@ -31,12 +31,12 @@ let parse_history (str : string) : string list =
   List.map ~f:(fun l -> (l ^ "}")) final
 
 let date_of_string (str : string) : date =
-  let year = int_of_string (String.sub str ~pos:1 ~len:4) in
-  let month = int_of_string (String.sub str ~pos:6 ~len:2) in
-  let day = int_of_string (String.sub str ~pos:9 ~len:2) in
-  let hour = int_of_string (String.sub str ~pos:12 ~len:2) in
-  let minute = int_of_string (String.sub str ~pos:15 ~len:2) in
-  let second = int_of_string (String.sub str ~pos:18 ~len:2) in
+  let year = int_of_string (String.sub str ~pos:0 ~len:4) in
+  let month = int_of_string (String.sub str ~pos:5 ~len:2) in
+  let day = int_of_string (String.sub str ~pos:8 ~len:2) in
+  let hour = int_of_string (String.sub str ~pos:11 ~len:2) in
+  let minute = int_of_string (String.sub str ~pos:14 ~len:2) in
+  let second = int_of_string (String.sub str ~pos:17 ~len:2) in
   {year; month; day; hour; minute; second}
 
 let request_item_history (key: string) (markethashname: string) (origin: string) 
