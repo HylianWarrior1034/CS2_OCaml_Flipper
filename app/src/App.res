@@ -3,7 +3,7 @@
 
 @react.component
 let make = () => {
-  let (count, setCount) = React.useState(() => 0)
+  // let (count, setCount) = React.useState(() => 0)
   let url = RescriptReactRouter.useUrl()
   <div>
     <Header/>
