@@ -18,6 +18,13 @@
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
 
+(executable
+ (name prediction)
+ (modules prediction)
+ (libraries yojson core torch csv)
+ (preprocess
+  (pps ppx_jane)))
+
 ; (executable
 ;  (name cs2_watch)
 ;  (modules cs2_watch)

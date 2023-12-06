@@ -18,7 +18,7 @@ let get_data (filename : string) : (float list list * float list) =
     float_of_string @@ List.nth_exn l 9, float_of_string @@ List.nth_exn l 10) in
   let rec convert (l : string list list) (input : float list list) (output : float list) : (float list list * float list)  = 
     match l with 
-    | [] -> (input, output)
+    | [] -> (List.tl_exn input, output)
     | x :: xs -> let one, two, three, four, five, six, seven, eight, nine, ten, key = extract x in 
       convert xs (input @ [[one; two; three; four; five; six; seven; eight; nine; ten]]) (output @ [key]) in 
   convert list1 [[]] [] 
@@ -31,7 +31,7 @@ let create () =
   let ff4 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 200 100) in
   let ff_out = (Layer.linear vs ~activation: Layer.Sigmoid ~input_dim: 100 1) in
   let sequential = Layer.sequential [ff1; ff2; ff3; ff4; ff_out] in 
-  let forward data = Layer.forward sequential data in 
+  let forward data = Layer.forward ff1 data |> Layer.forward ff2 |> Layer.forward ff3 |> Layer.forward ff4 |> Layer.forward ff_out in 
   forward
 
 let load filename : Dataset_helper.t = 
@@ -48,32 +48,34 @@ let load filename : Dataset_helper.t =
 
 let train net filename = 
   let vs = Var_store.create ~device: (Device.cuda_if_available ()) ~name: "optimizer" () in 
-  let optimizer = Optimizer.sgd ~learning_rate:0.001 ~momentum:0.9 vs in 
+  let optimizer = Optimizer.sgd ~learning_rate:0.1 ~momentum:0.9 vs in 
   let record = load filename in
   let {Dataset_helper.train_images; train_labels; test_images; test_labels} = record in
-  for index = 1 to 500 do
+  (* Stdio.printf "%s\n" ([%sexp_of: float array] (Tensor.to_float1_exn (Tensor.flatten (net train_images))) |> Sexp.to_string_hum); *)
+  (* Stdio.printf "%s\n" (Tensor.shape_str (net train_images)); *)
+  for index = 1 to 100 do
+    Optimizer.zero_grad optimizer;
     (* Compute the cross-entropy loss. *)
     let loss =
-      Tensor.binary_cross_entropy (net train_images) ~target:train_labels ~reduction: Torch_core.Reduction.None ~weight: None
+      Tensor.binary_cross_entropy (net train_images) ~target:train_labels ~reduction: Torch_core.Reduction.Elementwise_mean ~weight: None
     in
+    (* Stdio.printf "%s" (Array.fold ~init: "" ~f: (fun acc elt -> (string_of_float elt) ^ "; " ^ acc) (Tensor.to_float1_exn @@ net train_images)); *)
     Optimizer.backward_step optimizer ~loss;
-    if index % 50 = 0
-    then (
       (* Compute the validation error. *)
       let test_accuracy =
-        Dataset_helper.batch_accuracy record `test ~batch_size:6 ~predict: net
+        Dataset_helper.batch_accuracy record `test ~batch_size:6 ~predict:net
       in 
       Stdio.printf
-        "%d %f %.2f%%\n%!"
+        "%d Loss: %f Accuracy: %.2f%%\n%!"
         index
         (Tensor.float_value loss)
-        (100. *. test_accuracy))
+        (100. *. test_accuracy)
     done;;
 
 let () =
 
   let net = create () in 
-  let file = "" in
+  let file = "/home/ceash1034/FPSE/CS2_OCaml_Flipper/data_set.csv" in
   train net file
   (* let filename = "match_predictor.pt" in
   let model_parameters = Net2.parameters net in
