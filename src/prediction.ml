@@ -81,7 +81,7 @@ let extract(layers : (string * Tensor.t) list) : t =
       try
         (* if (String.("128, 10" = Tensor.shape_str x2)) then Stdio.printf "here\n"; Tensor.backward x2; *)
         (* Stdio.printf "%s\n" ([%sexp_of: float array array] (Tensor.to_float2_exn @@ Tensor.grad x2) |> Sexp.to_string_hum); *)
-        Stdio.printf "%s\n" (Tensor.shape_str x2);
+        (* Stdio.printf "%s\n" (Tensor.shape_str x2); *)
         helper xs ((Tensor.to_float2_exn x2) :: l) with _ -> helper xs l 
 
   in 
@@ -164,5 +164,5 @@ let () =
   let _, arg_list = List.split_n (Sys.get_argv () |> Array.to_list) 1 in
   match List.nth_exn arg_list 0 with
   | "train" ->   train_and_save ()
-  | "predict" -> let input = [0.07;0.07;0.07;0.07;0.07;0.07;0.09;0.09;0.09;0.1] in predict input 
+  | "predict" -> let input = [32.39;19.08;19.55;15.44;15.87;18.19;18.07;18.86;21.81;15.31] in predict input 
   | _ -> failwith "Invalid arg"
