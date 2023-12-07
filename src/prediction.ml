@@ -7,9 +7,12 @@ open Torch
 open Core
 open Csv
 
+type t = {ff1 : float array array; ff2: float array array; ff3: float array array; ff_out: float array array} [@@deriving sexp]
+
 let get_data (filename : string) : (float list list * float list) =
   let csv = Csv.load filename in
   let csv2 = Csv.to_array csv in
+  (* Stdio.printf "%s\n" ([%sexp_of: string array array] csv2 |> Sexp.to_string_hum); *)
   let list1 = Array.to_list @@ Array.map ~f: (fun x -> Array.to_list x) csv2 in
   let extract (l : string list) : (float * float * float * float * float * float * float * float * float * float * float) =
     (float_of_string @@ List.nth_exn l 0, float_of_string @@ List.nth_exn l 1, float_of_string @@ List.nth_exn l 2, 
@@ -23,17 +26,6 @@ let get_data (filename : string) : (float list list * float list) =
       convert xs (input @ [[one; two; three; four; five; six; seven; eight; nine; ten]]) (output @ [key]) in 
   convert list1 [[]] [] 
 
-let create () =
-  let vs = Var_store.create ~device: (Device.cuda_if_available ()) ~name: "nn" () in 
-  let ff1 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 10 128) in
-  let ff2 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 128 300) in
-  let ff3 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 300 200) in
-  let ff4 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 200 100) in
-  let ff_out = (Layer.linear vs ~activation: Layer.Sigmoid ~input_dim: 100 1) in
-  let sequential = Layer.sequential [ff1; ff2; ff3; ff4; ff_out] in 
-  let forward data = Layer.forward ff1 data |> Layer.forward ff2 |> Layer.forward ff3 |> Layer.forward ff4 |> Layer.forward ff_out in 
-  forward
-
 let load filename : Dataset_helper.t = 
   let input, output = get_data filename in 
   let train_input1, test_input1 = List.split_n input (4 * List.length input / 5) in 
@@ -45,39 +37,101 @@ let load filename : Dataset_helper.t =
   {Dataset_helper.train_images=Tensor.of_float2 train_input; Dataset_helper.train_labels=Tensor.of_float1 train_output;
   Dataset_helper.test_images=Tensor.of_float2 test_input; Dataset_helper.test_labels=Tensor.of_float1 test_output}
 
+let eval (net : Tensor.t -> Tensor.t) (data : (Tensor.t * Tensor.t)) : float = 
+  let test_data, test_label = data in 
+  let prediction = Array.to_list @@ Tensor.to_float1_exn @@ Tensor.squeeze_last @@ net test_data in 
+  let label = Array.to_list @@ Tensor.to_float1_exn test_label in
+  let length = List.length prediction in 
+  let rec helper (output : float list) (label : float list) (count : int) : int = 
+    match output with 
+    | [] -> count 
+    | x :: xs -> if int_of_float @@ (round ~dir: `Nearest x) = int_of_float @@ List.hd_exn label 
+      then helper xs (List.tl_exn label) (count + 1) 
+      else helper xs (List.tl_exn label) count
+    in 
+  (100. *. float_of_int (helper prediction label 0) /. float_of_int length)
 
-let train net filename = 
-  let vs = Var_store.create ~device: (Device.cuda_if_available ()) ~name: "optimizer" () in 
-  let optimizer = Optimizer.sgd ~learning_rate:0.1 ~momentum:0.9 vs in 
-  let record = load filename in
+
+let extract (layers : (string * Tensor.t) list) : t = 
+  let rec helper (ls : (string * Tensor.t) list) (l : float array array list) (grads : string) : float array array list = 
+    match ls with 
+    | [] ->  let oc = Out_channel.create "grads.scm" in
+              Printf.fprintf oc "%s\n" grads; l 
+    | (x1, x2) :: xs -> 
+      try
+      helper xs ((Tensor.to_float2_exn x2) :: l) (grads ^ ([%sexp_of: float array array] (Tensor.to_float2_exn @@ Tensor.grad x2) |> Sexp.to_string_hum) ^ "\n") with _ -> helper xs l grads
+
+  in 
+  let layers_list = helper layers [(List.to_array [(List.to_array [])])] "" in 
+  {ff1=List.nth_exn layers_list 1; ff2=List.nth_exn layers_list 0; ff3=List.nth_exn layers_list 2; ff_out=List.nth_exn layers_list 3}
+
+let train_and_save () =
+  let vs = Var_store.create ~frozen: false ~device: (Device.cuda_if_available ()) ~name: "nn" () in 
+  let ff1 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 10 128 ~w_init: Zeros) |> Layer.with_training in
+  let ff2 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 128 300 ~w_init: Zeros) |> Layer.with_training in
+  let ff3 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 300 100 ~w_init: Zeros) |> Layer.with_training in
+  let ff_out = (Layer.linear vs ~activation: Layer.Sigmoid ~input_dim: 100 1 ~w_init: Zeros) |> Layer.with_training in
+  (* Stdio.printf "%s\n" ([%sexp_of: float array array] (Tensor.to_float2_exn ff1) |> Sexp.to_string_hum); *)  
+  let forward data = Layer.forward_ ff1 data ~is_training: true |> Layer.forward_ ff2 ~is_training: true |> Layer.forward_ ff3 ~is_training: true|> Layer.forward_ ff_out ~is_training: true in 
+  let net = forward in 
+  let file = "/home/ceash1034/FPSE/CS2_OCaml_Flipper/even_dataset.csv" in
+  let vo = Var_store.create ~device: (Device.cuda_if_available ()) ~name: "optimizer" () in 
+  let optimizer = Optimizer.adam ~learning_rate: 0.001 vo in 
+  let record = load file in
   let {Dataset_helper.train_images; train_labels; test_images; test_labels} = record in
-  (* Stdio.printf "%s\n" ([%sexp_of: float array] (Tensor.to_float1_exn (Tensor.flatten (net train_images))) |> Sexp.to_string_hum); *)
-  (* Stdio.printf "%s\n" (Tensor.shape_str (net train_images)); *)
-  for index = 1 to 100 do
-    Optimizer.zero_grad optimizer;
-    (* Compute the cross-entropy loss. *)
-    let loss =
-      Tensor.binary_cross_entropy (net train_images) ~target:train_labels ~reduction: Torch_core.Reduction.Elementwise_mean ~weight: None
-    in
-    (* Stdio.printf "%s" (Array.fold ~init: "" ~f: (fun acc elt -> (string_of_float elt) ^ "; " ^ acc) (Tensor.to_float1_exn @@ net train_images)); *)
-    Optimizer.backward_step optimizer ~loss;
-      (* Compute the validation error. *)
-      let test_accuracy =
-        Dataset_helper.batch_accuracy record `test ~batch_size:6 ~predict:net
-      in 
-      Stdio.printf
-        "%d Loss: %f Accuracy: %.2f%%\n%!"
-        index
-        (Tensor.float_value loss)
-        (100. *. test_accuracy)
-    done;;
+  (* Stdio.printf "%s\n" (Tensor.shape_str (net train_images));
+  Stdio.printf "%s\n" (Tensor.shape_str train_labels); *)
+  for index = 1 to 200 do
+    (* Compute the binary cross-entropy loss. *)
+    for iter = 0 to 18 do
+      let train_shuffle = Dataset_helper.shuffle record in 
+      let batch_data, batch_label = Dataset_helper.train_batch ~device: (Device.cuda_if_available ()) train_shuffle ~batch_size: 6 ~batch_idx: iter in
+      let {Dataset_helper.train_images; train_labels; test_images; test_labels} = train_shuffle in
+      (* Stdio.printf "%s\n" (Tensor.shape_str @@ Tensor.squeeze_last @@ net batch_data);
+      Stdio.printf "%s\n" (Tensor.shape_str batch_label); *)
+      (* Stdio.printf "%s\n" ([%sexp_of: float array array] (Tensor.to_float2_exn (net batch_data)) |> Sexp.to_string_hum); *)
+      let loss =
+        (* Tensor.cross_entropy_for_logits (net train_images) ~targets:train_labels *)
+        Tensor.binary_cross_entropy (net batch_data) ~target:batch_label ~reduction: Torch_core.Reduction.Elementwise_mean ~weight:None
+      in
+      (* Optimizer.zero_grad optimizer; *)
+      Optimizer.backward_step optimizer ~loss;
+      if (iter = 0)
+        then (
+        (* Compute the validation error. *)
+        let test_accuracy =
+          Dataset_helper.batch_accuracy record `test ~batch_size:6 ~predict:net
+        in 
+        Stdio.printf
+          "%d Loss: %f Train Accuracy: %.2f%% Test Accuracy: %.2f%%\n"
+          index
+          (Tensor.float_value loss)
+          (eval net (record.train_images, record.train_labels))
+          (eval net (record.test_images, record.test_labels)));
+        Stdlib.Gc.full_major ()
+      done;
+    done;
+  let layers = Var_store.all_vars vs in 
+  let model = extract layers in 
+  let oc = Out_channel.create "weights2.scm" in
+  Printf.fprintf oc "%s\n" ([%sexp_of : t] model |> Sexp.to_string_hum);
+  (* Stdio.printf "%s\n" ([%sexp_of : t] model |> Sexp.to_string_hum); *)
+  Stdio.printf "%f\n" (Tensor.to_float0_exn (net (Tensor.of_float1 @@ List.to_array [191.09;207.66;183.11;210.79;222.13;271.5;296.52;290.78;349.91;260.41])))
+
+let predict () =
+  let load_model = Sexp.load_sexp "/home/ceash1034/FPSE/CS2_OCaml_Flipper/weights.scm" |> t_of_sexp in  
+  let vs = Var_store.create ~device: (Device.cuda_if_available ()) ~name: "nn" () in 
+  let ff1_tensor = Tensor.of_float2 load_model.ff1 in 
+  let ff2_tensor = Tensor.of_float2 load_model.ff2 in 
+  let ff3_tensor = Tensor.of_float2 load_model.ff3 in 
+  let ff_out_tensor = Tensor.of_float2 load_model.ff_out in 
+  let ff1 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 10 128 ~w_init: (Copy ff1_tensor)) in
+  let ff2 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 128 300 ~w_init: (Copy ff2_tensor)) in
+  let ff3 = (Layer.linear vs ~activation: Layer.Relu ~input_dim: 300 100  ~w_init: (Copy ff3_tensor)) in
+  let ff_out = (Layer.linear vs ~activation: Layer.Sigmoid ~input_dim: 100 1  ~w_init: (Copy ff_out_tensor)) in 
+  let forward data = Layer.forward ff1 data |> Layer.forward ff2 |> Layer.forward ff3 |> Layer.forward ff_out in 
+  let net = forward in  
+  Stdio.printf "%f\n" (Tensor.to_float0_exn (net (Tensor.of_float1 @@ List.to_array [191.09;207.66;183.11;210.79;222.13;271.5;296.52;290.78;349.91;260.41])))
 
 let () =
-
-  let net = create () in 
-  let file = "/home/ceash1034/FPSE/CS2_OCaml_Flipper/data_set.csv" in
-  train net file
-  (* let filename = "match_predictor.pt" in
-  let model_parameters = Net2.parameters net in
-  let tensors_to_save = Tensor.to_save_tensors parameters in
-  Torch.Serialize.save_tensors tensors_to_save filename *)
+  train_and_save ()
