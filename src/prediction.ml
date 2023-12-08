@@ -71,7 +71,7 @@ let extract_with_grad (layers : (string * Tensor.t) list) : t =
   (* {ff1=List.nth_exn layers_list 1; ff2=List.nth_exn layers_list 0; ff3=List.nth_exn layers_list 2; ff_out=List.nth_exn layers_list 3} *)
   {ff1=List.nth_exn layers_list 1; ff_out=List.nth_exn layers_list 0}
 
-let extract(layers : (string * Tensor.t) list) : t = 
+let extract (layers : (string * Tensor.t) list) : t = 
   let rec helper (ls : (string * Tensor.t) list) (l : float array array list) : float array array list = 
     match ls with 
     | [] ->  
@@ -160,9 +160,9 @@ let predict (input : float list) : unit =
   let output = Tensor.to_float1_exn @@ Tensor.squeeze_last (net (Tensor.of_float2 @@ List.to_array @@ List.map ~f: (fun x -> List.to_array x) input_list)) in 
   Stdio.printf "%f\n" (Array.fold ~init:0. ~f: (fun acc elt -> acc +. elt /. 10.) output)
 
-let () =
+(* let () =
   let _, arg_list = List.split_n (Sys.get_argv () |> Array.to_list) 1 in
   match List.nth_exn arg_list 0 with
   | "train" ->   train_and_save ()
   | "predict" -> let input = [32.39;19.08;19.55;15.44;15.87;18.19;18.07;18.86;21.81;15.31] in predict input 
-  | _ -> failwith "Invalid arg"
+  | _ -> failwith "Invalid arg" *)

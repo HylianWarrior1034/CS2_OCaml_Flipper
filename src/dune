@@ -11,19 +11,19 @@
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
 
+(library
+ (name prediction)
+ (modules prediction)
+ (libraries yojson core torch csv)
+ (preprocess
+  (pps ppx_jane)))
+
 (executables
  (names data_set) ;add more executables and their modules here
  (modules data_set)
  (libraries yojson core cs2_watch item_list) ;add torch back later
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
-
-(executable
- (name prediction)
- (modules prediction)
- (libraries yojson core torch csv)
- (preprocess
-  (pps ppx_jane)))
 
 ; (executable
 ;  (name cs2_watch)
