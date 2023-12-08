@@ -1,5 +1,5 @@
 (test
  (name tests)
- (libraries core ounit2 lib utils torch prediction)
+ (libraries core ounit2 torch prediction)
  (preprocess
   (pps ppx_jane bisect_ppx)))
