@@ -1,15 +1,17 @@
-(* open Torch 
+open Torch 
 
-type history = {itemName: string; itemHistory: float list} [@@deriving yojson, sexp]
+type t = {ff1 : float array array; ff_out: float array array} [@@deriving sexp]
 
-val normalize : float -> float
+val get_data : string -> (float list list * float list)
 
-val obtain_data : string -> history
+val load : string -> Dataset_helper.t
 
-val train : unit -> unit 
+val eval : (Tensor.t -> Tensor.t) -> (Tensor.t * Tensor.t) -> float 
 
-val load : unit -> Module.t
+val extract_with_grad : (string * Tensor.t) list -> t 
 
-val predict : string -> bool 
- *)
+val extract : (string * Tensor.t) list -> t
 
+val train_and_save : unit -> unit 
+
+val predict : float list -> unit
