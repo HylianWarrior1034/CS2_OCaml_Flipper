@@ -21,7 +21,7 @@
 (executables
  (names data_set) ;add more executables and their modules here
  (modules data_set)
- (libraries yojson core cs2_watch item_list) ;add torch back later
+ (libraries yojson torch core cs2_watch item_list) ;add torch back later
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
 
