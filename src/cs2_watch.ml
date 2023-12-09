@@ -39,6 +39,17 @@ let date_of_string (str : string) : date =
   let second = int_of_string (String.sub str ~pos:17 ~len:2) in
   {year; month; day; hour; minute; second}
 
+let request_items (key: string) (maxitems: string) (sort_by: string) 
+(price_min: string) (price_max: string) (item_group: string) (item_type: string) : Yojson.Basic.t list = 
+  let request_type = "items" ^ "?" in
+  let list = [request_type; key; maxitems; sort_by; price_min; price_max; item_group] in
+  let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat ~sep: "&" list) in
+  let body = Cohttp_lwt_unix.Client.get (Uri.of_string request) >>= fun (_, body) ->
+    body |> Cohttp_lwt.Body.to_string >|= fun body ->
+    body
+    in 
+    List.map (Lwt_main.run body |> parse_items) ~f: (fun x -> x |> Yojson.Basic.from_string)
+
 let request_item_history (key: string) (markethashname: string) (origin: string) 
 (source: string) (interval: string) (start_date: string) (end_date: string) : Yojson.Basic.t list = 
   let request_type = "history" ^ "?" in
@@ -50,17 +61,6 @@ let request_item_history (key: string) (markethashname: string) (origin: string)
     in 
     (* Lwt_main.run body |> parse ////////////// |> member "markethashname"*) 
     List.map (Lwt_main.run body |> parse_history) ~f: (fun x -> x |> Yojson.Basic.from_string)
-
-let request_items (key: string) (maxitems: string) (sort_by: string) 
-(price_min: string) (price_max: string) (item_group: string) (item_type: string) : Yojson.Basic.t list = 
-  let request_type = "items" ^ "?" in
-  let list = [request_type; key; maxitems; sort_by; price_min; price_max; item_group] in
-  let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat ~sep: "&" list) in
-  let body = Cohttp_lwt_unix.Client.get (Uri.of_string request) >>= fun (_, body) ->
-    body |> Cohttp_lwt.Body.to_string >|= fun body ->
-    body
-    in 
-    List.map (Lwt_main.run body |> parse_items) ~f: (fun x -> x |> Yojson.Basic.from_string)
 
 let yojson_to_items (l : Yojson.Basic.t list) : item list =
   let convert (it : Yojson.Basic.t) : item = 
