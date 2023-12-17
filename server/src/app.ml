@@ -3,11 +3,13 @@
 let welcome : Dream.route =
   Dream.get "/"
     (fun request ->
-      Dream.html "Hello, world!")
+      Dream.json "{\"name\":\"john\"}")
       
 let () =
   Dream.run
-  @@ Dream.logger
   @@ Dream.router [
     welcome;
+    Cs2_controller.item_data;
+    Cs2_controller.item_history;
+    Cs2_controller.item_prediction;
   ]

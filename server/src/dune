@@ -1,6 +1,19 @@
+(library
+ (name cs2_service)
+ (modules cs2_service)
+ (libraries core dream)
+ (preprocess
+  (pps ppx_jane ppx_deriving_yojson)))
+
+(library
+ (name cs2_controller)
+ (modules cs2_controller)
+ (libraries core dream cs2_service)
+ (preprocess
+  (pps ppx_jane ppx_deriving_yojson)))
+
 (executable
 (name app)
 (modules app)
-(libraries core dream)
-(preprocess (pps lwt_ppx ppx_deriving_yojson))
-)
+(libraries core dream cs2_controller)
+(preprocess (pps lwt_ppx ppx_deriving_yojson)))
