@@ -9,7 +9,6 @@ let example_history_string = "[{\"id\":106913563,\"avg\":avg,\"median\":0.49,\"p
 let example_date_string = "2023-12-04T00:00:00+00:00"
 let example_date = {year = 2023; month = 12; day = 4; hour = 0; minute = 0; second = 0}
 
-(*
 let example_history =
   [
     {
@@ -54,7 +53,6 @@ let example_item_list =
       lowestSellPrice = 51.38;
     }
   ]
-  *)
 
 let test_parse_items _ =
   let items_objects = parse_items example_items_string in
@@ -74,22 +72,18 @@ let test_parse_history _ =
 let test_date_of_string _ =
   assert_equal (date_of_string example_date_string) example_date
 
-(*
 let test_yojson_to_items _ =
-  assert_equal (yojson_to_items [(Yojson.Basic.from_string example_items_string)]) example_item_list
+  assert_equal (yojson_to_steam_items [(Yojson.Basic.from_string example_items_string)]) example_item_list
 
 let test_yojson_to_history _ =
   assert_equal (yojson_to_history [(Yojson.Basic.from_string example_history_string)]) example_history
-*)
 
 let cs2_watch_tests = "CS2 Watcher Tests" >: test_list [
   "parse_items" >:: test_parse_items;
   "parse_history" >:: test_parse_history;
   "date_of_string" >:: test_date_of_string;
-  (*
   "yojson_to_items" >:: test_yojson_to_items;
   "yojson_to_history" >:: test_yojson_to_history;
-  *)
 ]
 
 (* In these next two tests remember to change the directory to work with your computer.*)

@@ -1,0 +1,32 @@
+[
+  {
+    "id" : 106913563,
+    "price" : 0.49,
+    "num_sold" : 1,
+    "itemId" : "4bb07540-6e27-434c-8e31-ebb13b408fcb",
+    "time" :
+    {
+      "year" : 2023,
+      "month" : 12,
+      "day" : 4,
+      "hour" : 0,
+      "minute" : 0,
+      "second" : 0
+    }
+  },
+  {
+    "id" : 106913562,
+    "price" : 0.52,
+    "num_sold" : 4,
+    "itemId" : "4bb07540-6e27-434c-8e31-ebb13b408fcb",
+    "time" :
+    {
+      "year" : 2023,
+      "month" : 12,
+      "day" : 3,
+      "hour" : 0,
+      "minute" : 0,
+      "second" : 0
+    }
+  }
+]
