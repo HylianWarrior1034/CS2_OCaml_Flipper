@@ -3,6 +3,7 @@ type watcherItemData = {
   price: float,
   threshold: string,
   itemId: string,
+  alert: bool,
 }
 
 @react.component
@@ -11,6 +12,8 @@ let make = () => {
   let (price, setPrice) = React.useState(_ => 0.)
   let (itemId, setItemId) = React.useState(_ => "")
   let (threshold, setThreshold) = React.useState(_ => "")
+  let (thresholdError, setThresholdError) = React.useState(_ => false)
+  let (itemIdError, setItemIdError) = React.useState(_ => false)
   let dollarAmountRegex = Js.Re.fromString("^\\d*(\\.\\d{0,2})?$")
 
   let handleItemIdChange = event => {
@@ -34,10 +37,27 @@ let make = () => {
   }
 
   let addItem = event => {
-    let newWatcherItemData = {id: Belt.List.length(watcherItemList), price, threshold, itemId}
-    setWatcherItemList(prevItems => list{newWatcherItemData, ...prevItems})
-    setPrice(_ => 0.)
-    setItemId(_ => "")
+    setThresholdError(_ => false)
+    setItemIdError(_ => false)
+    if itemId == "" || threshold == "" {
+      if threshold == "" {
+        setThresholdError(_ => true)
+      }
+      if itemId == "" {
+        setItemIdError(_ => true)
+      }
+    } else {
+      let newWatcherItemData = {
+        id: Belt.List.length(watcherItemList),
+        price,
+        threshold,
+        itemId,
+        alert: false,
+      }
+      setWatcherItemList(prevItems => list{newWatcherItemData, ...prevItems})
+      setPrice(_ => 0.)
+      setItemId(_ => "")
+    }
 
     Js.Console.log(itemId)
     Js.Console.log(Belt.List.length(watcherItemList))
@@ -47,17 +67,19 @@ let make = () => {
     Js.Console.log("test")
   }
 
-  <div className="bg-gray-300 h-screen">
-    <h1> {React.string("This is the watcher page")} </h1>
+  <div className="bg-gray-300 h-screen flex flex-col items-center p-5">
     <div
-      className="relative flex flex-row justify-between mt-6 text-gray-700 bg-white shadow-md bg-clip-border rounded-xl w-96">
+      className="relative flex flex-row text-gray-700 bg-white shadow-md bg-clip-border rounded-xl w-200 p-5">
       <Mui.TextField
+        error=itemIdError
         id="itemid"
-        label={React.string("Item ID")}
+        label={React.string("Item Hash ID")}
         value={Mui.TextField.Value.string(itemId)}
         onChange={handleItemIdChange}
       />
       <Mui.Select
+        error=thresholdError
+        className="mr-10 ml-10"
         id="threshold"
         label={React.string("When to alert")}
         onChange={handleThresholdChange}
@@ -87,6 +109,7 @@ let make = () => {
         threshold={watcherItem.threshold}
         itemId={watcherItem.itemId}
         deleteFunction={_ => deleteItem(~key=watcherItem.id)}
+        alert={watcherItem.alert}
       />
     )
     ->Belt.List.toArray
