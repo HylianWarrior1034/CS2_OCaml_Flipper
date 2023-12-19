@@ -46,6 +46,16 @@ let date_of_string (str : string) : date =
   let second = int_of_string (String.sub str ~pos:17 ~len:2) in
   {year; month; day; hour; minute; second}
 
+let request_item (key: string) (market_hash_name: string) : Yojson.Basic.t = 
+  let request_type = "item" ^ "?" in
+  let list = [request_type; key; market_hash_name; "USD"] in
+  let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat ~sep: "&" list) in
+  let body = Cohttp_lwt_unix.Client.get (Uri.of_string request) >>= fun (_, body) ->
+    body |> Cohttp_lwt.Body.to_string >|= fun body ->
+    body
+    in 
+    Lwt_main.run body |> Yojson.Basic.from_string
+
 let request_items (key: string) (maxitems: string) (sort_by: string) 
 (price_min: string) (price_max: string) (item_group: string) (item_type: string) : Yojson.Basic.t list = 
   let request_type = "items" ^ "?" in
@@ -58,9 +68,9 @@ let request_items (key: string) (maxitems: string) (sort_by: string)
     List.map (Lwt_main.run body |> parse_items) ~f: (fun x -> x |> Yojson.Basic.from_string)
 
 let request_item_history (key: string) (markethashname: string) (origin: string) 
-(source: string) (interval: string) (start_date: string) (end_date: string) : Yojson.Basic.t list = 
+(source: string) (interval: string) : Yojson.Basic.t list = 
   let request_type = "history" ^ "?" in
-  let list = [request_type; key; markethashname; origin; source; interval; start_date; end_date] in
+  let list = [request_type; key; origin; source; interval; markethashname] in
   let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat ~sep: "&" list) in
   let body = Cohttp_lwt_unix.Client.get (Uri.of_string request) >>= fun (_, body) ->
     body |> Cohttp_lwt.Body.to_string >|= fun body ->
@@ -68,6 +78,15 @@ let request_item_history (key: string) (markethashname: string) (origin: string)
     in 
     (* Lwt_main.run body |> parse ////////////// |> member "markethashname"*) 
     List.map (Lwt_main.run body |> parse_history) ~f: (fun x -> x |> Yojson.Basic.from_string)
+
+let yojson_to_steam_item (it : Yojson.Basic.t) : steam_item =
+  let itemName = it |> member "markethashname" |> to_string in 
+  let itemGroup = it |> member "itemgroup" |> to_string in 
+  let itemType = it |> member "itemtype" |> to_string in 
+  let itemId = it |> member "id" |> to_string in 
+  let lowestSellPrice = it |> member "pricemin" |> to_float in
+  let item = {itemName; itemGroup; itemType; itemId; lowestSellPrice} in
+  item
 
 let yojson_to_steam_items (l : Yojson.Basic.t list) : steam_item list =
   let convert (it : Yojson.Basic.t) : steam_item = 

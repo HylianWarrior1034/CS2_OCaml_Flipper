@@ -12,6 +12,10 @@ val parse_cs2_items : string -> string list
 
 val date_of_string : string -> date
 
+val request_item : string ->
+    string ->
+    Yojson.Basic.t
+
 val request_items : string ->
     string ->
     string ->
@@ -26,9 +30,9 @@ val request_item_history : string ->
     string ->
     string ->
     string ->
-    string ->
-    string ->
-    Yojson.Basic.t list 
+    Yojson.Basic.t list
+
+val yojson_to_steam_item : Yojson.Basic.t -> steam_item
 
 val yojson_to_steam_items : Yojson.Basic.t list -> steam_item list
 
