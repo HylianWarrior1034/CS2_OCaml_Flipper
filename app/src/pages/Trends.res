@@ -90,6 +90,9 @@ let green = "text-[#1DCC28] font-bold text-lg"
 let make = () => {
   let (steamWebApiKey, setSteamWebApiKey) = React.useState(_ => "")
   let (graphData, setGraphData) = React.useState(_ => [])
+  let (hashName, setHashName) = React.useState(_ => "")
+  let (apiKeyError, setApiKeyError) = React.useState(_ => false)
+  let (hashNameError, setHashNameError) = React.useState(_ => false)
   let get = (url: string) => {
     open Promise
     fetch(url, params)
@@ -112,7 +115,31 @@ let make = () => {
     })
   }
 
+  let handleHashNameChange = event => {
+    let value = ReactEvent.Form.currentTarget(event)["value"]
+    Js.log(value)
+
+    setHashName(value)
+  }
+
+  let handleSteamWebApiKeyChange = event => {
+    let value = ReactEvent.Form.currentTarget(event)["value"]
+    Js.log(value)
+
+    setSteamWebApiKey(value)
+  }
+
   let getHistory = (~steamWebApiKey, ~hashName, ~interval) => {
+    setApiKeyError(_ => false)
+    setHashNameError(_ => false)
+    if hashName == "" || steamWebApiKey == "" {
+      if hashName == "" {
+        setHashNameError(_ => true)
+      }
+      if steamWebApiKey == "" {
+        setApiKeyError(_ => true)
+      }
+    } else {
     let _ =
       get_history(
         "http://localhost:8080/item/history?api_key=" ++
@@ -137,12 +164,19 @@ let make = () => {
         | Error(msg) =>
           Js.log(msg)
           Promise.resolve()
+<<<<<<< Updated upstream
+=======
+        | Error(msg) =>
+          Js.log(msg)
+          Promise.resolve()
+>>>>>>> Stashed changes
         }
       })
       ->Promise.catch(e => {
         // Js.log("dsf")
         Promise.resolve()
       })
+    }
   }
   <div className="bg-gray-300 h-screen overflow-y-hidden">
     <div className="p-10 flex flex-row justify-evenly">
@@ -152,14 +186,27 @@ let make = () => {
       <div className="flex flex-col">
         <div className="flex items-end justify-center mt-7">
           <span className="mr-2"> {React.string("Steam Web API Key: ")} </span>
-          <Mui.TextField id="steamapi" label={React.string("Steam Web API Key")} />
+          <Mui.TextField
+            error=apiKeyError
+            id="steamapi"
+            label={React.string("Steam Web API Key")}
+            value={Mui.TextField.Value.string(steamWebApiKey)}
+            onChange={handleSteamWebApiKeyChange}
+          />
         </div>
         <div className="flex items-end justify-center mt-7">
           <span className="mr-2"> {React.string("Item ID: ")} </span>
-          <Mui.TextField id="Item ID" label={React.string("Item ID")} />
+          <Mui.TextField
+            error=hashNameError
+            id="Item ID"
+            label={React.string("Item ID")}
+            value={Mui.TextField.Value.string(hashName)}
+            onChange={handleHashNameChange}
+          />
         </div>
         <div
           className="flex items-end justify-center mt-7 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+<<<<<<< Updated upstream
           <button
             onClick={_ =>
               getHistory(
@@ -167,6 +214,9 @@ let make = () => {
                 ~hashName="SG 553 | Lush Ruins (Factory New)",
                 ~interval="1",
               )}>
+=======
+          <button onClick={_ => getHistory(~steamWebApiKey, ~hashName, ~interval="1")}>
+>>>>>>> Stashed changes
             {React.string("Fetch History and Prediction")}
           </button>
         </div>
