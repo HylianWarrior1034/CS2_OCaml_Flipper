@@ -14,4 +14,4 @@ val extract : (string * Tensor.t) list -> t
 
 val train_and_save : unit -> unit 
 
-val predict : float list -> unit
+val predict : float list -> float

@@ -14,13 +14,23 @@ let item_history : Dream.route =
     (fun request ->
       match Dream.all_queries request with
       | [ ("api_key", api_key); ("item_hash", item_hash); ("interval", interval) ] ->
-        let history = Cs2_watch.request_item_history api_key item_hash "steam" "steam" interval |> Cs2_watch.yojson_to_history in
-        s
+        Cs2_service.item_history api_key item_hash interval
       | _ ->
         Dream.json ~status:`Bad_Request ~headers:[ "Access-Control-Allow-Origin", "*" ] "\"message\":\"bad request\"")
 
 (* Get item hashname and history and call proper function from Cs2_service to make prediction.*)
 let item_prediction : Dream.route =
   Dream.get "/item/prediction"
-    (fun _request ->
-      Dream.json "{\"placeholder\":\"prediction\"}")
+    (fun request ->
+      match Dream.all_queries request with
+      | [ ("data1", data1); ("data2", data2); ("data3", data3); ("data4", data4); ("data5", data5); ("data6", data6); ("data7", data7); ("data8", data8); ("data9", data9); ("data10", data10); ] ->
+        let prices = List.map (fun str -> float_of_string str) [data1; data2; data3; data4; data5; data6; data7; data8; data9; data10] in
+        let prediction = Prediction.predict prices in
+        Dream.json
+        (
+          Printf.sprintf
+          "{\"prediction\":\"%f\"}"
+          prediction
+        )
+      | _ ->
+        Dream.json ~status:`Bad_Request ~headers:[ "Access-Control-Allow-Origin", "*" ] "\"message\":\"bad request\"")

@@ -94,7 +94,7 @@ let train_and_save () =
   let ff_out = (Layer.linear vs ~activation: Layer.Sigmoid ~input_dim: 128 1 ~w_init: Zeros) in
   (* let net data = Layer.forward ff1 data |> Layer.forward ff2 |> Layer.forward ff3 |> Layer.forward ff_out in  *)
   let net data = Layer.forward ff1 data |> Layer.forward ff_out in 
-  let file = "/home/ceash1034/FPSE/CS2_OCaml_Flipper/even_dataset.csv" in
+  let file = "/root/repo/CS2_OCaml_Flipper/even_dataset.csv" in
   let optimizer = Optimizer.sgd ~learning_rate: 0.001 ~momentum: 0.9 vs in 
   let record = load file in
   let {Dataset_helper.train_images; train_labels; test_images; test_labels} = record in
@@ -138,8 +138,8 @@ let train_and_save () =
   (* Stdio.printf "%s\n" ([%sexp_of : t] model |> Sexp.to_string_hum); *)
   Stdio.printf "%f\n" (Tensor.to_float0_exn (net (Tensor.of_float1 @@ List.to_array [191.09;207.66;183.11;210.79;222.13;271.5;296.52;290.78;349.91;260.41])))
 
-let predict (input : float list) : unit =
-  let load_model = Sexp.load_sexp "/home/ceash1034/FPSE/CS2_OCaml_Flipper/weights.scm" |> t_of_sexp in  
+let predict (input : float list) : float =
+  let load_model = Sexp.load_sexp "/root/repo/CS2_OCaml_Flipper/server/weights.scm" |> t_of_sexp in  
   let vs = Var_store.create ~device: (Device.cuda_if_available ()) ~name: "nn" () in 
   let ff1_tensor = Tensor.of_float2 load_model.ff1 in 
   let ff_out_tensor = Tensor.of_float2 load_model.ff_out in 
@@ -155,11 +155,11 @@ let predict (input : float list) : unit =
   Printf.fprintf oc "%s\n" ([%sexp_of : t] model |> Sexp.to_string_hum);
   let input_list = [input; input; input; input; input; input; input; input; input; input] in
   let output = Tensor.to_float1_exn @@ Tensor.squeeze_last (net (Tensor.of_float2 @@ List.to_array @@ List.map ~f: (fun x -> List.to_array x) input_list)) in 
-  Stdio.printf "%f\n" (Array.fold ~init:0. ~f: (fun acc elt -> acc +. elt /. 10.) output)
+  (Array.fold ~init:0. ~f: (fun acc elt -> acc +. elt /. 10.) output)
 
-let () =
+(* let () =
   let _, arg_list = List.split_n (Sys.get_argv () |> Array.to_list) 1 in
   match List.nth_exn arg_list 0 with
   | "train" ->   train_and_save ()
   | "predict" -> let input = [32.39;19.08;19.55;15.44;15.87;18.19;18.07;18.86;21.81;15.31] in predict input 
-  | _ -> failwith "Invalid arg"
+  | _ -> failwith "Invalid arg" *)
