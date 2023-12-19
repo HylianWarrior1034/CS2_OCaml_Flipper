@@ -7,6 +7,4 @@ val item_history : string ->
   string ->
   Dream.response Lwt.t
 
-val item_prediction : string ->
-  string ->
-  Dream.response Lwt.t
+val item_prediction : float list -> Dream.response Lwt.t

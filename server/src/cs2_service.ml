@@ -4,7 +4,7 @@ let item_data (api_key : string) (item_hash : string) : Dream.response Lwt.t =
   Dream.json
   (
     Printf.sprintf
-    "{\"hash_name\":\"%s\",\"group\":\"%s\",\"type\":\"%s\",\"id\":\"%s\",\"group\":\"%f\"}"
+    "{\"data\":{\"hash_name\":\"%s\",\"group\":\"%s\",\"type\":\"%s\",\"id\":\"%s\",\"group\":\"%f\"},\"code\":200}"
     item.itemName
     item.itemGroup
     item.itemType
@@ -19,7 +19,7 @@ let item_history (api_key : string) (item_hash : string) (interval : string) : D
     (
       fun (price : Cs2_watch.price_point) ->
       Printf.sprintf
-      "{\"id\":\"%d\",\"price\":\"%f\",\"num_sold\":\"%d\",\"item_id\":\"%s\",\"date\":\"%d-%d-%d\"}"
+      "{\"data\":{\"id\":\"%d\",\"price\":\"%f\",\"num_sold\":\"%d\",\"item_id\":\"%s\",\"date\":\"%d-%d-%d\"},\"code\":200}"
       price.id
       price.price
       price.num_sold
@@ -34,5 +34,11 @@ let item_history (api_key : string) (item_hash : string) (interval : string) : D
   let total_history = Printf.sprintf "[%s]" prices_str in
   Dream.json total_history
 
-let item_prediction (_api_key : string) (_item_hash : string) : Dream.response Lwt.t =
-  Dream.json "{\"placeholder\":\"data\"}"
+let item_prediction (prices : float list) : Dream.response Lwt.t =
+  let prediction = Prediction.predict prices in
+        Dream.json
+        (
+          Printf.sprintf
+          "{\"data\":{\"prediction\":\"%f\"},\"code\":200}"
+          prediction
+        )

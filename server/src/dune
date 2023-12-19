@@ -15,14 +15,14 @@
 (library
  (name cs2_service)
  (modules cs2_service)
- (libraries core dream cs2_watch)
+ (libraries core dream cs2_watch prediction)
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
 
 (library
  (name cs2_controller)
  (modules cs2_controller)
- (libraries core dream cs2_service prediction)
+ (libraries core dream cs2_service)
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
 

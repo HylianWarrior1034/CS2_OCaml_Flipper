@@ -25,12 +25,6 @@ let item_prediction : Dream.route =
       match Dream.all_queries request with
       | [ ("data1", data1); ("data2", data2); ("data3", data3); ("data4", data4); ("data5", data5); ("data6", data6); ("data7", data7); ("data8", data8); ("data9", data9); ("data10", data10); ] ->
         let prices = List.map (fun str -> float_of_string str) [data1; data2; data3; data4; data5; data6; data7; data8; data9; data10] in
-        let prediction = Prediction.predict prices in
-        Dream.json
-        (
-          Printf.sprintf
-          "{\"prediction\":\"%f\"}"
-          prediction
-        )
+        Cs2_service.item_prediction prices
       | _ ->
         Dream.json ~status:`Bad_Request ~headers:[ "Access-Control-Allow-Origin", "*" ] "\"message\":\"bad request\"")
