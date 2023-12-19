@@ -4,6 +4,8 @@ type response<'data> = {
 }
 
 type d = {name: string}
+type data = {date: string, price: float}
+// type history = {data: array<data>}
 
 module Response = {
   type t<'data>
@@ -11,6 +13,7 @@ module Response = {
 }
 
 type res = response<d>
+type res_history = response<array<{"date": string, "price": float}>>
 
 let params = {
   "method": "GET",
@@ -19,7 +22,10 @@ let params = {
 @val
 external fetch: (string, 'params) => Promise.t<Response.t<res>> = "fetch"
 
-let get = (url: string) => {
+@val
+external fetch_history: (string, 'params) => Promise.t<Response.t<res_history>> = "fetch"
+
+let get_data = (url: string) => {
   open Promise
   fetch(url, params)
   ->then(res => Response.json(res))
@@ -36,38 +42,43 @@ let get = (url: string) => {
     Error(msg)->resolve
   })
 }
-let x =
-  get("http://localhost:8080")
-  ->Promise.then(ret => {
-    switch ret {
-    | Ok(res) =>
-      Js.log(res.data.name)
-      Promise.resolve()
-    | Error(msg) => Promise.resolve()
-    }
+let get_history = (url: string) => {
+  open Promise
+  fetch_history(url, params)
+  ->then(res => Response.json(res))
+  ->then(data =>
+    switch data.code {
+    | 200 => Ok(data)
+    | 500 => Error("Data not received")
+    | _ => Error("Internal Server Error")
+    }->resolve
+  )
+  ->catch(e => {
+    Js.log("asdf")
+    let msg = "hi"
+    Error(msg)->resolve
   })
-  ->Promise.catch(e => {
-    // Js.log("dsf")
-    Promise.resolve()
-  })
+}
 
 // Js.Console.log(get("http://localhost:8080")->Promise.then(async v => {Js.Console.log(v)}))
 // get("http://localhost:8080")->Promise.then(data)
 
 let data = [
   {
-    "time": "Day 1",
-    "pv": 400,
+    "date": "Day 1",
+    "price": 400,
   },
   {
-    "time": "Day 2",
-    "pv": 200,
+    "date": "Day 2",
+    "price": 200,
   },
   {
-    "time": "Day 3",
-    "pv": 350,
+    "date": "Day 3",
+    "price": 350,
   },
 ]
+
+Js.log(data)
 
 let chance = "33% CHANCE TO GO "
 
@@ -78,6 +89,7 @@ let green = "text-[#1DCC28] font-bold text-lg"
 @react.component
 let make = () => {
   let (steamWebApiKey, setSteamWebApiKey) = React.useState(_ => "")
+  let (graphData, setGraphData) = React.useState(_ => [])
   let get = (url: string) => {
     open Promise
     fetch(url, params)
@@ -85,8 +97,12 @@ let make = () => {
     ->then(data =>
       switch data.code {
       | 200 => Ok(data)
-      | 500 => Error("Data not received")
-      | _ => Error("Internal Server Error")
+      | 500 =>
+        Js.log(data)
+        Error("Data not received")
+      | _ =>
+        Js.log(data)
+        Error("Internal Server Error")
       }->resolve
     )
     ->catch(e => {
@@ -98,7 +114,7 @@ let make = () => {
 
   let getHistory = (~steamWebApiKey, ~hashName, ~interval) => {
     let _ =
-      get(
+      get_history(
         "http://localhost:8080/item/history?api_key=" ++
         steamWebApiKey ++
         "&item_hash=" ++
@@ -109,11 +125,18 @@ let make = () => {
       ->Promise.then(ret => {
         switch ret {
         | Ok(res) =>
-          Js.log(res)
+          // Js.log(res.data[1].price)
+          // let temp = Array.map(res.data, x => {
+          //   date: x.date,
+          //   price: Belt.Float.fromString(x.price),
+          // })
+          setGraphData(_ => res.data)
+          Js.log(graphData)
+          // Js.log(Belt.List.toArray(res.data.data))
           Promise.resolve()
-        | Error(msg) => 
-        Js.log(msg)
-        Promise.resolve()
+        | Error(msg) =>
+          Js.log(msg)
+          Promise.resolve()
         }
       })
       ->Promise.catch(e => {
@@ -124,7 +147,7 @@ let make = () => {
   <div className="bg-gray-300 h-screen overflow-y-hidden">
     <div className="p-10 flex flex-row justify-evenly">
       <div className="pt-10">
-        <LineGraph data />
+        <LineGraph data=graphData />
       </div>
       <div className="flex flex-col">
         <div className="flex items-end justify-center mt-7">
@@ -140,9 +163,8 @@ let make = () => {
           <button
             onClick={_ =>
               getHistory(
-                ~steamWebApiKey="W2VDY6UEYE5LMQTP",
-                ~hashName="SG 553 | Lush Ruins (Factory New)
-",
+                ~steamWebApiKey="RYESIG8WRAX6TXS8",
+                ~hashName="SG 553 | Lush Ruins (Factory New)",
                 ~interval="1",
               )}>
             {React.string("Fetch History and Prediction")}

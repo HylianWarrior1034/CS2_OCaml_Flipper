@@ -25,24 +25,21 @@ in   let _ = List.iter (fun item_yojson ->
 ) items
 
 in let history = Cs2_watch.yojson_to_history items in
-  let prices_str_list =
-    List.map
+  let prices_str_list, _ =
+    Core.List.split_n (List.map
     (
       fun (price : Cs2_watch.price_point) ->
       Printf.sprintf
-      "{\"data\":{\"id\":\"%d\",\"price\":\"%f\",\"num_sold\":\"%d\",\"item_id\":\"%s\",\"date\":\"%d-%d-%d\"},\"code\":200}"
-      price.id
+      "{\"data\":{\"price\":%f,\"date\":\"%d-%d-%d\"}}"
       price.price
-      price.num_sold
-      price.itemId
       price.time.year
       price.time.month
       price.time.day
     )
-    history
+    history) 10
   in
   let prices_str = String.concat "," prices_str_list in
-  let total_history = Printf.sprintf "[%s]" prices_str in
+  let total_history = Printf.sprintf "{\"data\": [%s], \"code\":200}" prices_str in
   (* let js = "{\"data\":"  ^ total_history ^ "}" in *)
   Dream.json       
   ~status: (Dream.int_to_status 200)

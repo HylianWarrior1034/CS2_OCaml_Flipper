@@ -1,1 +1,38 @@
 (lang dune 3.10)
+
+(generate_opam_files true)
+
+(authors "Daniel Moon (dmoon9)" "Ihsan Ahmed (iahmed6)" "Kai Ko (kko11)")
+
+(maintainers "dmoon9@jhu.edu")
+
+(package
+ (name cs2_watcher) ; put in your own project name here
+ (synopsis "CS2 item watcher and predictor")
+ (description
+  "Find out the current price of the item, it's price history, and its future projections")
+ (depends
+  (dune
+   (>= 2.9))
+  (ounit2
+   (> 2.2.7))
+  (core
+   (> 0.16.1))
+  (torch
+   (>= 0.16.0))
+  (cohttp-lwt-unix
+   (>= 5.3.0))
+  (csv
+   (>= 2.4))
+  (yojson
+   (>= 2.1.0))
+  (ppx_deriving_yojson
+   (>= 3.7.0))
+  (bisect_ppx
+   (>= 2.7.0))
+  (dream
+   (>= 1.0.0~alpha5))
+  (lwt
+   (>= 5.7.0))
+  (lwt_ppx
+   (>= 2.1.0))))

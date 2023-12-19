@@ -68,7 +68,7 @@ let request_item (key: string) (market_hash_name: string) : Yojson.Basic.t Lwt.t
 let request_item_history (key: string) (markethashname: string) (origin: string) 
 (source: string) (interval: string) : Yojson.Basic.t list Lwt.t = 
 let request_type = "history?" in
-let list = [request_type;"&key=";key; "&origin=" ;origin; "&source=" ;source; "&interval=" ;interval; "&market_hash_name="; markethashname] in
+let list = [request_type;"key=";key; "&origin=" ;origin; "&source=" ;source; "&interval=" ;interval; "&market_hash_name="; markethashname] in
 let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat list) in
 (* let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/history?key=W2VDY6UEYE5LMQTP&market_hash_name=SG 553 | Lush Ruins (Factory New)
 &origin=steam&source=steam&interval=1" in *)
