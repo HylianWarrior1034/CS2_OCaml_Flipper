@@ -3,22 +3,17 @@ type response<'data> = {
   code: int,
 }
 
-type data = {name: string}
+type d = {name: string}
 
 module Response = {
   type t<'data>
   @send external json: t<'data> => Promise.t<'data> = "json"
 }
 
-type res = response<data>
+type res = response<d>
 
 let params = {
   "method": "GET",
-  "headers": {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow_headers": "X-Requested-With",
-  },
 }
 
 @val
@@ -30,14 +25,35 @@ let get = (url: string) => {
   ->then(res => Response.json(res))
   ->then(data =>
     switch data.code {
-    | 200 => Ok(data.data)
-    | 500 => Error("Game not started")
+    | 200 =>
+      // Js.log(data)
+      Ok(data)
+    | 500 => Error("Data not received")
     | _ => Error("Internal Server Error")
     }->resolve
   )
+  ->catch(e => {
+    let msg = "hi"
+    Error(msg)->resolve
+  })
 }
+let _ =
+  get("http://localhost:8080")
+  ->Promise.then(ret => {
+    switch ret {
+    | Ok(res) =>
+      Js.log(res)
+      Promise.resolve()
+    | Error(msg) => Promise.resolve()
+    }
+  })
+  ->Promise.catch(e => {
+    // Js.log("dsf")
+    Promise.resolve()
+  })
 
-Js.log(get("http://localhost:8080"))
+// Js.Console.log(get("http://localhost:8080")->Promise.then(async v => {Js.Console.log(v)}))
+// get("http://localhost:8080")->Promise.then(data)
 
 let data = [
   {
