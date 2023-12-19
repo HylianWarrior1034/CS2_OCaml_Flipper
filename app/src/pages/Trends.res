@@ -1,3 +1,44 @@
+type response<'data> = {
+  data: 'data,
+  code: int,
+}
+
+type data = {name: string}
+
+module Response = {
+  type t<'data>
+  @send external json: t<'data> => Promise.t<'data> = "json"
+}
+
+type res = response<data>
+
+let params = {
+  "method": "GET",
+  "headers": {
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow_headers": "X-Requested-With",
+  },
+}
+
+@val
+external fetch: (string, 'params) => Promise.t<Response.t<res>> = "fetch"
+
+let get = (url: string) => {
+  open Promise
+  fetch(url, params)
+  ->then(res => Response.json(res))
+  ->then(data =>
+    switch data.code {
+    | 200 => Ok(data.data)
+    | 500 => Error("Game not started")
+    | _ => Error("Internal Server Error")
+    }->resolve
+  )
+}
+
+Js.log(get("http://localhost:8080"))
+
 let data = [
   {
     "time": "Day 1",

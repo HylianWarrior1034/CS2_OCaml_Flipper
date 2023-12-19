@@ -22,7 +22,19 @@
     "version": 4,
     "mode": "automatic"
   },
-  "bs-dependencies": ["@rescript/react", "@rescript/core", "rescript-webapi", "rescript-material-ui", "@cobbweb/rescript-recharts"],
-  "bs-dev-dependencies": ["rescript-vitest"],
-  "bsc-flags": ["-open RescriptCore"]
+  "bs-dependencies": [
+    "@rescript/react",
+    "@rescript/core",
+    "rescript-webapi",
+    "rescript-material-ui",
+    "@cobbweb/rescript-recharts",
+    "rescript-request",
+    "rescript-future"
+  ],
+  "bs-dev-dependencies": [
+    "rescript-vitest"
+  ],
+  "bsc-flags": [
+    "-open RescriptCore"
+  ]
 }

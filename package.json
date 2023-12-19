@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "rescript": "^10.1.4"
+    "rescript": "^10.1.4",
+    "rescript-future": "^2.1.0",
+    "rescript-request": "^3.0.1"
   }
 }

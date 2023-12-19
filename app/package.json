@@ -14,6 +14,8 @@
     "@cobbweb/rescript-recharts": "github:cobbweb/rescript-recharts",
     "@rescript/core": "^0.6.0",
     "@rescript/react": "^0.11.0",
+    "@ryyppy/rescript-promise": "^2.1.0",
+    "bs-fetch": "^0.6.2",
     "chart.js": "^4.4.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
