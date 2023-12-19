@@ -1,5 +1,4 @@
 open Cs2_watch
-open Item_list
 
 val api_url : string
 val api_key : string

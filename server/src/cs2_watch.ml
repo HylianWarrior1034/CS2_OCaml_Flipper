@@ -7,8 +7,8 @@ open Yojson.Basic.Util
 [@@@ocaml.warning "-27"]
 [@@@ocaml.warning "-32"]
 
-
-type item = {itemName:string; itemGroup: string; itemType:string; itemId: string; lowestSellPrice: float} [@@deriving yojson, sexp]
+type cs2_item = { collection: string; weapon: string; skin: string; quality: string; url: string}
+type steam_item = {itemName:string; itemGroup: string; itemType:string; itemId: string; lowestSellPrice: float} [@@deriving yojson, sexp]
 type date = {year: int; month: int; day: int; hour: int; minute: int; second: int}
 type price_point = {id: int; price: float; num_sold: int; itemId: string; time: date}
 type history = price_point list
@@ -24,6 +24,13 @@ let parse_items (str : string) : string list =
   List.map ~f: (fun l -> (l ^ "}")) final
 
 let parse_history (str : string) : string list =
+  let no_brackets = String.strip ~drop: (fun c -> Char.equal c '[' || Char.equal c ']') str in
+  let split = String.split ~on: '}' no_brackets in
+  let no_commas = List.map ~f: (fun l -> (String.lstrip ~drop: (fun c -> Char.equal c ',') l)) split in
+  let final = List.filter ~f:(fun x-> String.(x <> "")) no_commas in
+  List.map ~f:(fun l -> (l ^ "}")) final
+
+let parse_cs2_items (str : string) : string list =
   let no_brackets = String.strip ~drop: (fun c -> Char.equal c '[' || Char.equal c ']') str in
   let split = String.split ~on: '}' no_brackets in
   let no_commas = List.map ~f: (fun l -> (String.lstrip ~drop: (fun c -> Char.equal c ',') l)) split in
@@ -62,8 +69,8 @@ let request_item_history (key: string) (markethashname: string) (origin: string)
     (* Lwt_main.run body |> parse ////////////// |> member "markethashname"*) 
     List.map (Lwt_main.run body |> parse_history) ~f: (fun x -> x |> Yojson.Basic.from_string)
 
-let yojson_to_items (l : Yojson.Basic.t list) : item list =
-  let convert (it : Yojson.Basic.t) : item = 
+let yojson_to_steam_items (l : Yojson.Basic.t list) : steam_item list =
+  let convert (it : Yojson.Basic.t) : steam_item = 
     let itemName = it |> member "markethashname" |> to_string in 
     let itemGroup = it |> member "itemgroup" |> to_string in 
     let itemType = it |> member "itemtype" |> to_string in 
@@ -83,6 +90,18 @@ let yojson_to_history (l : Yojson.Basic.t list) : history =
     let time = (date_of_string (it |> member "createdat" |> to_string)) in
     let new_price_point = {id; price; num_sold; itemId; time} in
     new_price_point
+  in
+  List.map l ~f:(fun x -> convert x)
+
+let yojson_to_cs2_items (l : Yojson.Basic.t list) : cs2_item list =
+  let convert (it : Yojson.Basic.t) : cs2_item =
+    let collection = it |> member "collection" |> to_string in
+    let weapon = it |> member "weapon" |> to_string in
+    let skin = it |> member "skin" |> to_string in
+    let quality = it |> member "quality" |> to_string in
+    let url = it |> member "url" |> to_string in
+    let new_cs2_item = {collection; weapon; skin; quality; url} in
+    new_cs2_item
   in
   List.map l ~f:(fun x -> convert x)
 

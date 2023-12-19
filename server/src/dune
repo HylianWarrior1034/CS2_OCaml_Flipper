@@ -5,12 +5,6 @@
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
 
-(library
- (name item_list)
- (modules item_list)
- (preprocess
-  (pps ppx_jane ppx_deriving_yojson)))
-
 ; (library
 ;  (name prediction)
 ;  (modules prediction)
@@ -35,6 +29,6 @@
 (executables
  (names app data_set prediction)
  (modules app data_set prediction)
- (libraries core dream cs2_controller yojson torch cs2_watch item_list csv)
+ (libraries core dream cs2_controller yojson torch cs2_watch csv)
  (preprocess
   (pps lwt_ppx ppx_jane ppx_deriving_yojson)))

@@ -1,7 +1,6 @@
 open Core
 open Lwt
 open Cs2_watch
-open Item_list
 
 let api_url = "https://www.steamwebapi.com"
 let api_key = "MUACASBJX02H1AQP"
@@ -100,6 +99,9 @@ let rec create_data_set_string (all_items : cs2_item list) (data_set : string) (
 
 let () =
   let channel = Out_channel.create "data_set.csv" in
-  let complete_data_set = create_data_set_string all_items "" 0 300 in
+  let cs2_items_str = In_channel.read_all "./item_list.json" in
+  let cs2_items_json = List.map (parse_cs2_items cs2_items_str) ~f: (fun x -> x |> Yojson.Basic.from_string) in
+  let cs2_items = yojson_to_cs2_items cs2_items_json in
+  let complete_data_set = create_data_set_string cs2_items "" 0 300 in
   Out_channel.output_string channel complete_data_set;
   Out_channel.close channel
