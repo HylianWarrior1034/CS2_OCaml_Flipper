@@ -88,9 +88,10 @@ let green = "text-[#1DCC28] font-bold text-lg"
 
 @react.component
 let make = () => {
-  let (steamWebApiKey, setSteamWebApiKey) = React.useState(_ => "")
+  let (steamWebApiKey, setSteamWebApiKey) = React.useState(_ => "W2VDY6UEYE5LMQTP")
   let (graphData, setGraphData) = React.useState(_ => [])
-  let (hashName, setHashName) = React.useState(_ => "")
+  let (hashName, setHashName) = React.useState(_ => "SG 553 | Lush Ruins (Factory New)
+")
   let (apiKeyError, setApiKeyError) = React.useState(_ => false)
   let (hashNameError, setHashNameError) = React.useState(_ => false)
   let get = (url: string) => {
@@ -164,12 +165,6 @@ let make = () => {
         | Error(msg) =>
           Js.log(msg)
           Promise.resolve()
-<<<<<<< Updated upstream
-=======
-        | Error(msg) =>
-          Js.log(msg)
-          Promise.resolve()
->>>>>>> Stashed changes
         }
       })
       ->Promise.catch(e => {
@@ -190,6 +185,7 @@ let make = () => {
             error=apiKeyError
             id="steamapi"
             label={React.string("Steam Web API Key")}
+            defaultValue={Mui.TextField.DefaultValue.string("W2VDY6UEYE5LMQTP")}
             value={Mui.TextField.Value.string(steamWebApiKey)}
             onChange={handleSteamWebApiKeyChange}
           />
@@ -200,23 +196,15 @@ let make = () => {
             error=hashNameError
             id="Item ID"
             label={React.string("Item ID")}
+            defaultValue={Mui.TextField.DefaultValue.string("SG 553 | Lush Ruins (Factory New)
+")}
             value={Mui.TextField.Value.string(hashName)}
             onChange={handleHashNameChange}
           />
         </div>
         <div
           className="flex items-end justify-center mt-7 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-<<<<<<< Updated upstream
-          <button
-            onClick={_ =>
-              getHistory(
-                ~steamWebApiKey="RYESIG8WRAX6TXS8",
-                ~hashName="SG 553 | Lush Ruins (Factory New)",
-                ~interval="1",
-              )}>
-=======
           <button onClick={_ => getHistory(~steamWebApiKey, ~hashName, ~interval="1")}>
->>>>>>> Stashed changes
             {React.string("Fetch History and Prediction")}
           </button>
         </div>
