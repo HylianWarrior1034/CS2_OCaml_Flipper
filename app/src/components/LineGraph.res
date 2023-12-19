@@ -3,12 +3,12 @@ open Recharts
 @react.component
 let make = (~data) => {
   <ResponsiveContainer
-    height={Recharts.Utils.PxOrPrc.encode(Px(200.))}
-    width={Recharts.Utils.PxOrPrc.encode(Px(300.))}>
+    height={Recharts.Utils.PxOrPrc.encode(Px(300.))}
+    width={Recharts.Utils.PxOrPrc.encode(Px(600.))}>
     <LineChart
-      width={730} height={250} data={data} margin={"top": 0, "right": 0, "bottom": 0, "left": 0}>
+      width={730} height={250} data={data} margin={"top": 10, "right": 10, "bottom": 0, "left": 0}>
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
+      <XAxis dataKey="time" />
       <YAxis />
       <Tooltip />
       <Legend />

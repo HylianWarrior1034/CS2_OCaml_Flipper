@@ -6,11 +6,11 @@ let make = () => {
   // let (count, setCount) = React.useState(() => 0)
   let url = RescriptReactRouter.useUrl()
   <div>
-    <Header/>
+    <Header />
     {switch url.path {
-      | list{"trends"} => <Trends/>
-      | list{"watcher"} => <Watcher/>
-      | _ => <p> {"default"->React.string} </p> 
+    | list{"trends"} => <Trends />
+    | list{"watcher"} => <Watcher />
+    | _ => <p> {"default"->React.string} </p>
     }}
     // <button >{React.string("Predictor")}</button>
   </div>
