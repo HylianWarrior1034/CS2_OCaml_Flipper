@@ -5,7 +5,7 @@ let welcome : Dream.route =
       Dream.json 
       ~status: (Dream.int_to_status 200)
       ~headers:["Access-Control-Allow-Origin", "*"]
-      "{\"name\":\"john\"}")
+      "{\"data\": {\"name\":\"john\"}, \"code\": 200}")
       
 
       (* Template for catching error statuses and forwarding errors to the client *)

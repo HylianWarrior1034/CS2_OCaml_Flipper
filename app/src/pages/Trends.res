@@ -25,24 +25,23 @@ let get = (url: string) => {
   ->then(res => Response.json(res))
   ->then(data =>
     switch data.code {
-    | 200 =>
-      // Js.log(data)
-      Ok(data)
+    | 200 => Ok(data)
     | 500 => Error("Data not received")
     | _ => Error("Internal Server Error")
     }->resolve
   )
   ->catch(e => {
+    Js.log("asdf")
     let msg = "hi"
     Error(msg)->resolve
   })
 }
-let _ =
+let x =
   get("http://localhost:8080")
   ->Promise.then(ret => {
     switch ret {
     | Ok(res) =>
-      Js.log(res)
+      Js.log(res.data.name)
       Promise.resolve()
     | Error(msg) => Promise.resolve()
     }
@@ -91,6 +90,12 @@ let make = () => {
         <div className="flex items-end justify-center mt-7">
           <span className="mr-2"> {React.string("Item ID: ")} </span>
           <Mui.TextField id="Item ID" label={React.string("Item ID")} />
+        </div>
+        <div
+          className="flex items-end justify-center mt-7 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <button onClick={_event => Js.log("what")}>
+            {React.string("Fetch History and Prediction")}
+          </button>
         </div>
         <div className="flex items-end justify-center mt-10">
           {React.string("Expected Movement Tomorrow: ")}
