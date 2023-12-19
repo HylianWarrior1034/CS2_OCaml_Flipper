@@ -11,10 +11,14 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@cobbweb/rescript-recharts": "github:cobbweb/rescript-recharts",
     "@rescript/core": "^0.6.0",
     "@rescript/react": "^0.11.0",
+    "chart.js": "^4.4.1",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+    "rescript-material-ui": "^3.0.2",
     "rescript-webapi": "^0.9.0"
   },
   "devDependencies": {
