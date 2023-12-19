@@ -15,16 +15,13 @@ let get_data (filename : string) : (float list list * float list) =
   let csv2 = Csv.to_array csv in
   (* Stdio.printf "%s\n" ([%sexp_of: string array array] csv2 |> Sexp.to_string_hum); *)
   let list1 = Array.to_list @@ Array.map ~f: (fun x -> Array.to_list x) csv2 in
-  let extract (l : string list) : (float * float * float * float * float * float * float * float * float * float * float) =
-    (float_of_string @@ List.nth_exn l 0, float_of_string @@ List.nth_exn l 1, float_of_string @@ List.nth_exn l 2, 
-    float_of_string @@ List.nth_exn l 3, float_of_string @@ List.nth_exn l 4, float_of_string @@ List.nth_exn l 5, 
-    float_of_string @@ List.nth_exn l 6, float_of_string @@ List.nth_exn l 7, float_of_string @@ List.nth_exn l 8, 
-    float_of_string @@ List.nth_exn l 9, float_of_string @@ List.nth_exn l 10) in
+  let extract (l : string list) : float list =
+    List.fold ~init: [] ~f: (fun acc elt -> float_of_string elt :: acc) l in
   let rec convert (l : string list list) (input : float list list) (output : float list) : (float list list * float list)  = 
     match l with 
     | [] -> (List.tl_exn input, output)
-    | x :: xs -> let one, two, three, four, five, six, seven, eight, nine, ten, key = extract x in 
-      convert xs (input @ [[one; two; three; four; five; six; seven; eight; nine; ten]]) (output @ [key]) in 
+    | x :: xs -> let l = extract x in 
+      convert xs (input @ [List.rev @@ List.tl_exn l]) (output @ [List.hd_exn l]) in 
   convert list1 [[]] [] 
 
 let load filename : Dataset_helper.t = 
@@ -160,9 +157,9 @@ let predict (input : float list) : unit =
   let output = Tensor.to_float1_exn @@ Tensor.squeeze_last (net (Tensor.of_float2 @@ List.to_array @@ List.map ~f: (fun x -> List.to_array x) input_list)) in 
   Stdio.printf "%f\n" (Array.fold ~init:0. ~f: (fun acc elt -> acc +. elt /. 10.) output)
 
-(* let () =
+let () =
   let _, arg_list = List.split_n (Sys.get_argv () |> Array.to_list) 1 in
   match List.nth_exn arg_list 0 with
   | "train" ->   train_and_save ()
   | "predict" -> let input = [32.39;19.08;19.55;15.44;15.87;18.19;18.07;18.86;21.81;15.31] in predict input 
-  | _ -> failwith "Invalid arg" *)
+  | _ -> failwith "Invalid arg"

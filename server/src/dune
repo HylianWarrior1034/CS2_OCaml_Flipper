@@ -11,12 +11,12 @@
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
 
-(library
- (name prediction)
- (modules prediction)
- (libraries yojson core torch csv)
- (preprocess
-  (pps ppx_jane)))
+; (library
+;  (name prediction)
+;  (modules prediction)
+;  (libraries yojson core torch csv)
+;  (preprocess
+;   (pps ppx_jane)))
 
 (library
  (name cs2_service)
@@ -33,8 +33,8 @@
   (pps ppx_jane ppx_deriving_yojson)))
 
 (executables
-(names app data_set)
-(modules app data_set)
-(libraries core dream cs2_controller yojson torch cs2_watch item_list)
-(preprocess
+ (names app data_set prediction)
+ (modules app data_set prediction)
+ (libraries core dream cs2_controller yojson torch cs2_watch item_list csv)
+ (preprocess
   (pps lwt_ppx ppx_jane ppx_deriving_yojson)))
