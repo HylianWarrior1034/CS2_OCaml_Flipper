@@ -77,6 +77,50 @@ let green = "text-[#1DCC28] font-bold text-lg"
 
 @react.component
 let make = () => {
+  let (steamWebApiKey, setSteamWebApiKey) = React.useState(_ => "")
+  let get = (url: string) => {
+    open Promise
+    fetch(url, params)
+    ->then(res => Response.json(res))
+    ->then(data =>
+      switch data.code {
+      | 200 => Ok(data)
+      | 500 => Error("Data not received")
+      | _ => Error("Internal Server Error")
+      }->resolve
+    )
+    ->catch(e => {
+      Js.log("asdf")
+      let msg = "hi"
+      Error(msg)->resolve
+    })
+  }
+
+  let getHistory = (~steamWebApiKey, ~hashName, ~interval) => {
+    let _ =
+      get(
+        "http://localhost:8080/item/history?api_key=" ++
+        steamWebApiKey ++
+        "&item_hash=" ++
+        hashName ++
+        "&interval=" ++
+        interval,
+      )
+      ->Promise.then(ret => {
+        switch ret {
+        | Ok(res) =>
+          Js.log(res)
+          Promise.resolve()
+        | Error(msg) => 
+        Js.log(msg)
+        Promise.resolve()
+        }
+      })
+      ->Promise.catch(e => {
+        // Js.log("dsf")
+        Promise.resolve()
+      })
+  }
   <div className="bg-gray-300 h-screen overflow-y-hidden">
     <div className="p-10 flex flex-row justify-evenly">
       <div className="pt-10">
@@ -93,7 +137,14 @@ let make = () => {
         </div>
         <div
           className="flex items-end justify-center mt-7 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          <button onClick={_event => Js.log("what")}>
+          <button
+            onClick={_ =>
+              getHistory(
+                ~steamWebApiKey="W2VDY6UEYE5LMQTP",
+                ~hashName="SG 553 | Lush Ruins (Factory New)
+",
+                ~interval="1",
+              )}>
             {React.string("Fetch History and Prediction")}
           </button>
         </div>

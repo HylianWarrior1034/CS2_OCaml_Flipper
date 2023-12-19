@@ -46,38 +46,35 @@ let date_of_string (str : string) : date =
   let second = int_of_string (String.sub str ~pos:17 ~len:2) in
   {year; month; day; hour; minute; second}
 
-let request_item (key: string) (market_hash_name: string) : Yojson.Basic.t = 
-  let request_type = "item" ^ "?" in
-  let list = [request_type; key; market_hash_name; "USD"] in
-  let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat ~sep: "&" list) in
+let request_item (key: string) (market_hash_name: string) : Yojson.Basic.t Lwt.t = 
+  let request_type = "item?" in
+  let list = [request_type;"key=" ;key ; "&market_hash_name="; market_hash_name; "&currency="; "USD"] in
+  let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat list) in
+  let _ =   Stdio.print_endline request in
   let body = Cohttp_lwt_unix.Client.get (Uri.of_string request) >>= fun (_, body) ->
     body |> Cohttp_lwt.Body.to_string >|= fun body ->
-    body
-    in 
-    Lwt_main.run body |> Yojson.Basic.from_string
-
-let request_items (key: string) (maxitems: string) (sort_by: string) 
-(price_min: string) (price_max: string) (item_group: string) (item_type: string) : Yojson.Basic.t list = 
-  let request_type = "items" ^ "?" in
-  let list = [request_type; key; maxitems; sort_by; price_min; price_max; item_group] in
-  let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat ~sep: "&" list) in
-  let body = Cohttp_lwt_unix.Client.get (Uri.of_string request) >>= fun (_, body) ->
-    body |> Cohttp_lwt.Body.to_string >|= fun body ->
-    body
-    in 
-    List.map (Lwt_main.run body |> parse_items) ~f: (fun x -> x |> Yojson.Basic.from_string)
+    Yojson.Basic.from_string body
+  in 
+  body
+  let request_items (key: string) (maxitems: string) (sort_by: string) 
+  (price_min: string) (price_max: string) (item_group: string) (item_type: string) : Yojson.Basic.t list Lwt.t = 
+    let request_type = "items?" in
+    let list = [request_type; key; maxitems; sort_by; price_min; price_max; item_group; item_type] in
+    let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat ~sep: "&" list) in
+    Cohttp_lwt_unix.Client.get (Uri.of_string request) >>= fun (_, body) ->
+      body |> Cohttp_lwt.Body.to_string >|= fun body ->
+      parse_items body |> List.map ~f:Yojson.Basic.from_string
 
 let request_item_history (key: string) (markethashname: string) (origin: string) 
-(source: string) (interval: string) : Yojson.Basic.t list = 
-  let request_type = "history" ^ "?" in
-  let list = [request_type; key; origin; source; interval; markethashname] in
-  let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat ~sep: "&" list) in
-  let body = Cohttp_lwt_unix.Client.get (Uri.of_string request) >>= fun (_, body) ->
-    body |> Cohttp_lwt.Body.to_string >|= fun body ->
-    body 
-    in 
-    (* Lwt_main.run body |> parse ////////////// |> member "markethashname"*) 
-    List.map (Lwt_main.run body |> parse_history) ~f: (fun x -> x |> Yojson.Basic.from_string)
+(source: string) (interval: string) : Yojson.Basic.t list Lwt.t = 
+let request_type = "history?" in
+let list = [request_type;"&key=";key; "&origin=" ;origin; "&source=" ;source; "&interval=" ;interval; "&market_hash_name="; markethashname] in
+let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/%s" (String.concat list) in
+(* let request = Printf.sprintf "https://www.steamwebapi.com/steam/api/history?key=W2VDY6UEYE5LMQTP&market_hash_name=SG 553 | Lush Ruins (Factory New)
+&origin=steam&source=steam&interval=1" in *)
+Cohttp_lwt_unix.Client.get (Uri.of_string request) >>= fun (_, body) ->
+  body |> Cohttp_lwt.Body.to_string >|= fun body ->
+  parse_history body |> List.map ~f:Yojson.Basic.from_string
 
 let yojson_to_steam_item (it : Yojson.Basic.t) : steam_item =
   let itemName = it |> member "markethashname" |> to_string in 

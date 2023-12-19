@@ -15,9 +15,9 @@
 (library
  (name cs2_service)
  (modules cs2_service)
- (libraries core dream cs2_watch prediction)
+ (libraries prediction lwt.unix lwt_ppx core dream cs2_watch)
  (preprocess
-  (pps ppx_jane ppx_deriving_yojson)))
+  (pps lwt_ppx ppx_jane ppx_deriving_yojson)))
 
 (library
  (name cs2_controller)

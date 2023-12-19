@@ -6,7 +6,9 @@ let item_data : Dream.route =
       | [ ("api_key", api_key); ("item_hash", item_hash) ] ->
         Cs2_service.item_data api_key item_hash
       | _ ->
-        Dream.json ~status:`Bad_Request ~headers:[ "Access-Control-Allow-Origin", "*" ] "\"message\":\"bad request\"")
+        Dream.json ~status:`Bad_Request ~headers:[ "Access-Control-Allow-Origin", "*" ] "\"message\":\"bad request\""
+        (* |> Lwt.return *)
+    )
 
 (* Get item hashname and retreive last ten purchase prices of the item.*)
 let item_history : Dream.route =

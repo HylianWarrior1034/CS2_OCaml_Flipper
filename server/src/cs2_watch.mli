@@ -14,7 +14,7 @@ val date_of_string : string -> date
 
 val request_item : string ->
     string ->
-    Yojson.Basic.t
+    Yojson.Basic.t Lwt.t
 
 val request_items : string ->
     string ->
@@ -23,18 +23,18 @@ val request_items : string ->
     string ->
     string ->
     string ->
-    Yojson.Basic.t list
+    Yojson.Basic.t list Lwt.t
 
 val request_item_history : string ->
     string ->
     string ->
     string ->
     string ->
-    Yojson.Basic.t list
+    Yojson.Basic.t list Lwt.t
 
 val yojson_to_steam_item : Yojson.Basic.t -> steam_item
 
-val yojson_to_steam_items : Yojson.Basic.t list -> steam_item list
+val yojson_to_steam_items : Yojson.Basic.t list  -> steam_item list
 
 val yojson_to_history : Yojson.Basic.t list -> history
 
