@@ -1,7 +1,27 @@
 (library
+ (name cs2_watch)
+ (modules cs2_watch)
+ (libraries yojson core cohttp-lwt-unix)
+ (preprocess
+  (pps ppx_jane ppx_deriving_yojson)))
+
+(library
+ (name item_list)
+ (modules item_list)
+ (preprocess
+  (pps ppx_jane ppx_deriving_yojson)))
+
+(library
+ (name prediction)
+ (modules prediction)
+ (libraries yojson core torch csv)
+ (preprocess
+  (pps ppx_jane)))
+
+(library
  (name cs2_service)
  (modules cs2_service)
- (libraries core dream)
+ (libraries core dream cs2_watch)
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
 
@@ -12,8 +32,9 @@
  (preprocess
   (pps ppx_jane ppx_deriving_yojson)))
 
-(executable
-(name app)
-(modules app)
-(libraries core dream cs2_controller)
-(preprocess (pps lwt_ppx ppx_deriving_yojson)))
+(executables
+(names app data_set)
+(modules app data_set)
+(libraries core dream cs2_controller yojson torch cs2_watch item_list)
+(preprocess
+  (pps lwt_ppx ppx_jane ppx_deriving_yojson)))
