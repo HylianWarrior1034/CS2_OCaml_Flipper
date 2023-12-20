@@ -11,11 +11,12 @@
  (synopsis "CS2 item watcher and predictor")
  (description
   "Find out the current price of the item, it's price history, and its future projections")
+ (allow_empty)
  (depends
   (dune
    (>= 2.9))
   (ounit2
-   (> 2.2.7))
+   (>= 2.2.7))
   (core
    (> 0.16.1))
   (torch

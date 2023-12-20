@@ -7,7 +7,7 @@ maintainer: ["dmoon9@jhu.edu"]
 authors: ["Daniel Moon (dmoon9)" "Ihsan Ahmed (iahmed6)" "Kai Ko (kko11)"]
 depends: [
   "dune" {>= "3.10" & >= "2.9"}
-  "ounit2" {> "2.2.7"}
+  "ounit2" {>= "2.2.7"}
   "core" {> "0.16.1"}
   "torch" {>= "0.16.0"}
   "cohttp-lwt-unix" {>= "5.3.0"}

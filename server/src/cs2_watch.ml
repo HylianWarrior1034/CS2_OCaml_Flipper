@@ -122,29 +122,3 @@ let yojson_to_cs2_items (l : Yojson.Basic.t list) : cs2_item list =
   in
   List.map l ~f:(fun x -> convert x)
 
-(* let () =
-  let key = "key=" ^ "656PQ76T992M22KJ" in
-  let maxitems = "max=100" in
-  let sort_by = "sort_by=" ^ "priceAz" in
-  let price_min = "price_min=" ^ "0" in
-  let price_max = "price_max=" ^ "100000" in
-  let item_group = "item_group=" ^ "rifle" in
-  let item_type = "item_type=" ^ "AK-47" in
-  let req = request_items key maxitems sort_by price_min price_max item_group item_type in
-  (* print_endline ("Body Received\n" ^ (String.concat ~sep: "\n" req)) *)
-  let str_list = yojson_to_items req in 
-  Stdio.printf "Received body \n %s \n" ([%sexp_of: item list] str_list |> Sexp.to_string_hum) *)
-(*
-let () =
-  let key = "key=" ^ "656PQ76T992M22KJ" in
-  let markethashname = "market_hash_name=AK-47 | Safari Mesh (Field-Tested)" in
-  let origin = "origin=" ^ "steam" in
-  let source = "source=" ^ "steam" in
-  let interval = "interval=" ^ "1" in
-  let start_date = "start_date=" ^ "2023-10-13" in
-  let end_date = "end_date=" ^ "2023-11-13" in
-  let req = request_item_history key markethashname origin source interval start_date end_date in
-  (* print_endline ("Body Received\n" ^ (String.concat ~sep: "\n" req)) *)
-  let str_list = yojson_to_item req in 
-  Stdio.printf "Received body \n %s \n" ([%sexp_of: item list] str_list |> Sexp.to_string_hum)
-*)

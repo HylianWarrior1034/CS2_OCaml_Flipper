@@ -1,5 +1,0 @@
-(rule
- (target observer.zip)
- (deps src/cs2_watch.ml src/dune src/prediction.ml)
- (action
-  (run zip -R observer.zip %{deps})))

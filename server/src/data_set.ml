@@ -34,6 +34,7 @@ let rec record_price_histories (histories : history option list) (data_set : str
           record_price_histories
           tail
           (
+            (* we are using List.nth_exn and not List.fold, because we only want a certain number of price points, and not everything in the item_history. *)
             Printf.sprintf
             "%s%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,1,\n"
             data_set

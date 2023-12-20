@@ -18,5 +18,5 @@ How to start server
 ```
 cd server
 dune build
-dune exec ./app.exe (depends on your development environment)
+dune exec ../_build/default/server/src/app.exe (depends on your development environment)
 ```
