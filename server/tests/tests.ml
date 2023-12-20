@@ -26,21 +26,6 @@ let example_history =
         second = 0;
       };
     };
-    {
-      id = 106913562;
-      price = 0.52;
-      num_sold = 4;
-      itemId = "4bb07540-6e27-434c-8e31-ebb13b408fcb";
-      time =
-      {
-        year = 2023;
-        month = 12;
-        day = 3;
-        hour = 0;
-        minute = 0;
-        second = 0;
-      }
-    };
   ]
 
 let example_item_list =
@@ -51,6 +36,26 @@ let example_item_list =
       itemType = "hand wraps";
       itemId = "44e89137-6d16-4095-bc86-3e76cde3ab3f";
       lowestSellPrice = 51.38;
+    }
+  ]
+
+let example_item =
+  {
+    itemName = "\\u2605 Hand Wraps | Constrictor (Battle-Scarred)";
+    itemGroup = "gloves";
+    itemType = "hand wraps";
+    itemId = "44e89137-6d16-4095-bc86-3e76cde3ab3f";
+    lowestSellPrice = 51.38;
+  }
+
+let example_cs2_item_list =
+  [
+    {
+      collection = "Control Collection";
+      weapon = "MP5-SD";
+      skin = "Nitro";
+      quality = "Industrial Grade";
+      url = "https://steamcommunity.com/market/search?appid=730&q=MP5-SD%20Nitro";
     }
   ]
 
@@ -72,18 +77,26 @@ let test_parse_history _ =
 let test_date_of_string _ =
   assert_equal (date_of_string example_date_string) example_date
 
-let test_yojson_to_items _ =
-  assert_equal (yojson_to_steam_items [(Yojson.Basic.from_string example_items_string)]) example_item_list
+let test_yojson_to_steam_item _ =
+  assert_equal (yojson_to_steam_item (Yojson.Basic.from_file "/root/repo/CS2_OCaml_Flipper/server/tests/example_item.json")) example_item
+
+let test_yojson_to_steam_items _ =
+  assert_equal (yojson_to_steam_items [(Yojson.Basic.from_file "/root/repo/CS2_OCaml_Flipper/server/tests/example_item.json")]) example_item_list
 
 let test_yojson_to_history _ =
-  assert_equal (yojson_to_history [(Yojson.Basic.from_string example_history_string)]) example_history
+  assert_equal (yojson_to_history [(Yojson.Basic.from_file "/root/repo/CS2_OCaml_Flipper/server/tests/example_price_point.json")]) example_history
+
+let test_yojson_to_cs2_items _ =
+  assert_equal (yojson_to_cs2_items [(Yojson.Basic.from_file "/root/repo/CS2_OCaml_Flipper/server/tests/example_cs2_item.json")]) example_cs2_item_list
 
 let cs2_watch_tests = "CS2 Watcher Tests" >: test_list [
   "parse_items" >:: test_parse_items;
   "parse_history" >:: test_parse_history;
   "date_of_string" >:: test_date_of_string;
-  "yojson_to_items" >:: test_yojson_to_items;
+  "yojson_to_item" >:: test_yojson_to_steam_item;
+  "yojson_to_items" >:: test_yojson_to_steam_items;
   "yojson_to_history" >:: test_yojson_to_history;
+  "yojson_to_cs2_items" >:: test_yojson_to_cs2_items;
 ]
 
 (* In these next two tests remember to change the directory to work with your computer.*)
