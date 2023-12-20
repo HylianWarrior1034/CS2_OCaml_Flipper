@@ -5,7 +5,6 @@ type response<'data> = {
 
 type d = {name: string}
 type data = {date: string, price: float}
-// type history = {data: array<data>}
 
 module Response = {
   type t<'data>
@@ -60,9 +59,6 @@ let get_history = (url: string) => {
   })
 }
 
-// Js.Console.log(get("http://localhost:8080")->Promise.then(async v => {Js.Console.log(v)}))
-// get("http://localhost:8080")->Promise.then(data)
-
 let data = [
   {
     "date": "Day 1",
@@ -90,8 +86,10 @@ let green = "text-[#1DCC28] font-bold text-lg"
 let make = () => {
   let (steamWebApiKey, setSteamWebApiKey) = React.useState(_ => "W2VDY6UEYE5LMQTP")
   let (graphData, setGraphData) = React.useState(_ => [])
-  let (hashName, setHashName) = React.useState(_ => "SG 553 | Lush Ruins (Factory New)
-")
+  let (hashName, setHashName) = React.useState(_ =>
+    "SG 553 | Lush Ruins (Factory New)
+"
+  )
   let (apiKeyError, setApiKeyError) = React.useState(_ => false)
   let (hashNameError, setHashNameError) = React.useState(_ => false)
   let get = (url: string) => {
@@ -141,36 +139,29 @@ let make = () => {
         setApiKeyError(_ => true)
       }
     } else {
-    let _ =
-      get_history(
-        "http://localhost:8080/item/history?api_key=" ++
-        steamWebApiKey ++
-        "&item_hash=" ++
-        hashName ++
-        "&interval=" ++
-        interval,
-      )
-      ->Promise.then(ret => {
-        switch ret {
-        | Ok(res) =>
-          // Js.log(res.data[1].price)
-          // let temp = Array.map(res.data, x => {
-          //   date: x.date,
-          //   price: Belt.Float.fromString(x.price),
-          // })
-          setGraphData(_ => res.data)
-          Js.log(graphData)
-          // Js.log(Belt.List.toArray(res.data.data))
+      let _ =
+        get_history(
+          "http://localhost:8080/item/history?api_key=" ++
+          steamWebApiKey ++
+          "&item_hash=" ++
+          hashName ++
+          "&interval=" ++
+          interval,
+        )
+        ->Promise.then(ret => {
+          switch ret {
+          | Ok(res) =>
+            setGraphData(_ => res.data)
+            Js.log(graphData)
+            Promise.resolve()
+          | Error(msg) =>
+            Js.log(msg)
+            Promise.resolve()
+          }
+        })
+        ->Promise.catch(e => {
           Promise.resolve()
-        | Error(msg) =>
-          Js.log(msg)
-          Promise.resolve()
-        }
-      })
-      ->Promise.catch(e => {
-        // Js.log("dsf")
-        Promise.resolve()
-      })
+        })
     }
   }
   <div className="bg-gray-300 h-screen overflow-y-hidden">

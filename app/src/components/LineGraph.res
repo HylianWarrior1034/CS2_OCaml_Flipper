@@ -13,7 +13,6 @@ let make = (~data) => {
       <Tooltip />
       <Legend />
       <Line _type=#monotone dataKey="price" stroke="#8884d8" />
-      // <Line _type=#monotone dataKey="uv" stroke="#82ca9d" />
     </LineChart>
   </ResponsiveContainer>
 }
